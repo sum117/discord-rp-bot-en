@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1709702767068,
-      "tag": "0000_omniscient_omega_red",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1709713083707,
-      "tag": "0001_violet_marvel_boy",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1709713147474,
-      "tag": "0002_burly_daredevil",
+      "when": 1709760654664,
+      "tag": "0000_true_jack_murdock",
       "breakpoints": true
     }
   ]

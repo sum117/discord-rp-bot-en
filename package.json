@@ -4,11 +4,13 @@
   "type": "module",
   "scripts": {
     "generate": "drizzle-kit generate:sqlite",
+    "studio": "drizzle-kit studio",
     "dev": "bun src/index.ts --watch"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/luxon": "^3.4.2",
+    "better-sqlite3": "^9.4.3",
     "drizzle-kit": "^0.20.14"
   },
   "peerDependencies": {
