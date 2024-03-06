@@ -9,7 +9,7 @@ import {
 export enum TextInputLength {
   Short = 128,
   Medium = 1024,
-  Paragraph = 4096,
+  Paragraph = 4000,
 }
 
 export interface TextInputData {

@@ -8,5 +8,15 @@
   "modalCharacterAppearancePlaceholder": "Enter character appearance",
   "modalCharacterBackstoryPlaceholder": "Enter character backstory",
   "modalCharacterPersonalityLabel": "Personality",
-  "modalCharacterPersonalityPlaceholder": "Enter character personality"
+  "modalCharacterPersonalityPlaceholder": "Enter character personality",
+  "createCharacterCommandName": "create-character",
+  "createCharacterCommandDescription": "Create a new character",
+  "chooseBotLanguageCommandName": "choose-bot-language",
+  "noLanguageSupplied": "❌ No language supplied. Please try again.",
+  "chooseBotLanguageCommandDescription": "Choose bot language",
+  "chooseBotLanguageCommandOptionName": "language",
+  "chooseBotLanguageCommandOptionDescription": "The language to use",
+  "createCharacterSuccess": "✅ Character with name {{characterName}} created successfully.",
+  "languageUpdated": "✅ Language updated to {{language}}.",
+  "invalidImageUrl": "❌ Invalid image URL. Please try again. Your image URL should start with https and end with .jpg, .jpeg, .png, or .gif."
 }

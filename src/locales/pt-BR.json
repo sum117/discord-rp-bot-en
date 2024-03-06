@@ -8,5 +8,15 @@
   "modalCharacterAppearancePlaceholder": "Digite a aparência do personagem",
   "modalCharacterBackstoryPlaceholder": "Digite a história do personagem",
   "modalCharacterPersonalityLabel": "Personalidade",
-  "modalCharacterPersonalityPlaceholder": "Digite a personalidade do personagem"
+  "modalCharacterPersonalityPlaceholder": "Digite a personalidade do personagem",
+  "createCharacterCommandName": "criar-personagem",
+  "createCharacterCommandDescription": "Cria um personagem",
+  "chooseBotLanguageCommandName": "Escolher Idioma",
+  "chooseBotLanguageCommandDescription": "Escolhe o idioma do bot",
+  "chooseBotLanguageCommandOptionName": "linguagem",
+  "noLanguageSupplied": "❌ Nenhuma linguagem fornecida. Por favor, tente novamente.",
+  "chooseBotLanguageCommandOptionDescription": "Linguagem para usar",
+  "languageUpdated": "✅ Idioma alterado para {{language}}.",
+  "createCharacterSuccess": "✅ Personagem com nome {{characterName}} criado com sucesso.",
+  "invalidImageUrl": "❌ URL de Imagem Inválida. Por favor, tente novamente. A URL de sua imagem deve terminar com .jpg, .jpeg, .png, or .gif."
 }
