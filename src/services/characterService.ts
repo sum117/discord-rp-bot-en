@@ -1,7 +1,9 @@
 import { TextInputStyle } from "discord.js";
 import Modal, { TextInputLength } from "../components/Modal";
 import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
+import db from "../database";
 import { translateFactory } from "../i18n";
+import { characters } from "../schema";
 
 export default class CharacterService {
   public static getCreateCharacterModal(
@@ -31,7 +33,7 @@ export default class CharacterService {
         placeholder: translate("modalCharacterAppearancePlaceholder"),
         maxLength: TextInputLength.Medium,
         style: TextInputStyle.Paragraph,
-        required: true,
+        required: false,
       })
       .addTextInput({
         customId: TEXT_INPUT_CUSTOM_IDS.backstory,
@@ -49,5 +51,20 @@ export default class CharacterService {
         style: TextInputStyle.Paragraph,
         required: false,
       });
+  }
+  public static async createCharacter(
+    characterData: typeof characters.$inferInsert
+  ) {
+    const createdCharacter = (
+      await db.insert(characters).values(characterData).returning()
+    ).at(0);
+    if (!createdCharacter) {
+      throw new Error(
+        `Failed to create character in database for user ${
+          characterData.authorId
+        }.\nCharacter Data: ${JSON.stringify(characterData)}`
+      );
+    }
+    return createdCharacter;
   }
 }
