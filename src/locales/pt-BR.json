@@ -1,0 +1,12 @@
+{
+  "modalCharacterNameLabel": "Nome",
+  "modalCharacterNamePlaceholder": "Digite o nome do personagem",
+  "modalCharacterImageUrlLabel": "URL da imagem",
+  "modalCharacterImageUrlPlaceholder": "Ex: https://www.imagem.com/imagem.jpg",
+  "modalCharacterBackstoryLabel": "Descrição",
+  "modalCharacterAppearanceLabel": "Aparência",
+  "modalCharacterAppearancePlaceholder": "Digite a aparência do personagem",
+  "modalCharacterBackstoryPlaceholder": "Digite a história do personagem",
+  "modalCharacterPersonalityLabel": "Personalidade",
+  "modalCharacterPersonalityPlaceholder": "Digite a personalidade do personagem"
+}
