@@ -67,5 +67,6 @@ CREATE TABLE `users` (
 	`joinedBotAt` integer,
 	`level` integer DEFAULT 1 NOT NULL,
 	`preferredLanguage` text DEFAULT 'en-US' NOT NULL,
-	`exp` integer DEFAULT 0 NOT NULL
+	`exp` integer DEFAULT 0 NOT NULL,
+	`currentCharacterId` integer
 );

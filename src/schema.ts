@@ -14,11 +14,16 @@ export const users = sqliteTable("users", {
     .notNull()
     .default("en-US"),
   exp: integer("exp").notNull().default(0),
+  currentCharacterId: integer("currentCharacterId"),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   characters: many(characters),
   posts: many(posts),
+  currentCharacter: one(characters, {
+    fields: [users.currentCharacterId],
+    references: [characters.id],
+  }),
 }));
 
 export const characters = sqliteTable("characters", {
@@ -46,6 +51,7 @@ export const charactersRelations = relations(characters, ({ one, many }) => ({
     fields: [characters.authorId],
     references: [users.id],
   }),
+  currentUsers: many(users),
   categories: many(categoriesToCharacters),
   posts: many(postsToCharacters),
   items: many(itemsCharacters),

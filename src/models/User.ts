@@ -8,6 +8,7 @@ export class User implements UserType {
   public level: number;
   public preferredLanguage: "en-US" | "pt-BR";
   public exp: number;
+  public currentCharacterId: number | null;
 
   public constructor(data: UserType) {
     this.id = data.id;
@@ -15,6 +16,7 @@ export class User implements UserType {
     this.level = data.level;
     this.preferredLanguage = data.preferredLanguage;
     this.exp = data.exp;
+    this.currentCharacterId = data.currentCharacterId;
   }
 
   public getTranslateFunction() {

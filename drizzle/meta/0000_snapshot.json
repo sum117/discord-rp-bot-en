@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "9f644a7c-e3b2-4814-9a0d-aaecd3e13d84",
+  "id": "e4cf1e63-a530-45b2-b0d4-391e9e5c386d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "categories": {
@@ -441,6 +441,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": 0
+        },
+        "currentCharacterId": {
+          "name": "currentCharacterId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},

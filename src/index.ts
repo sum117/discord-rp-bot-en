@@ -5,10 +5,12 @@ import {
   InteractionType,
   type ClientEvents,
 } from "discord.js";
+import { readdirSync } from "fs";
 import { readdir } from "fs/promises";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { BaseCommand } from "./commands/baseCommand";
+import { BaseEvent } from "./events/baseEvent";
 import type { characters, items } from "./schema";
 export interface RoleplayEventPayloads {
   characterCreate: [character: typeof characters.$inferSelect];
@@ -59,6 +61,34 @@ export class RoleplayBot extends Client {
       }
     }
   }
+
+  public setUpEvents() {
+    const events = readdirSync(
+      fileURLToPath(join(dirname(import.meta.url), "events"))
+    );
+    const eventSet = new Set<keyof RoleplayBotEventPayloads>();
+    const eventClasses: Record<string, BaseEvent[]> = {};
+    for (const event of events) {
+      const { default: Event } = require(`./events/${event}`);
+      if (Event && Event.prototype instanceof BaseEvent) {
+        const event: BaseEvent = new Event();
+        eventSet.add(event.runsOn);
+        if (!eventClasses[event.runsOn]) {
+          eventClasses[event.runsOn] = [event];
+        } else {
+          eventClasses[event.runsOn]!.push(event);
+        }
+        console.log(`✅ Registered event: ${event.name} (${event.runsOn})`);
+      }
+    }
+    for (const event of eventSet) {
+      this.on(event, (...args) => {
+        eventClasses[event]?.forEach((eventClass) => {
+          eventClass.execute(...args);
+        });
+      });
+    }
+  }
 }
 
 export const bot = new RoleplayBot({
@@ -68,13 +98,13 @@ export const bot = new RoleplayBot({
     GatewayIntentBits.DirectMessages,
   ],
 });
+bot.setUpEvents();
 
 bot.on(Events.ClientReady, async (readyClient) => {
   console.log(`Logged in as ${readyClient.user?.tag}`);
   await bot.setUpApplicationCommands();
 });
 
-bot.on(Events.MessageCreate, (message) => {});
 bot.on(Events.InteractionCreate, (interaction) => {
   switch (interaction.type) {
     case InteractionType.ApplicationCommand:

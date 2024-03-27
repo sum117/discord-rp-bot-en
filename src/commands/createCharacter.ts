@@ -1,5 +1,6 @@
 import { type CommandInteraction } from "discord.js";
 import { Duration } from "luxon";
+import { RoleplayEvents, bot } from "..";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
 import CharacterService from "../services/characterService";
@@ -54,6 +55,8 @@ export default class CreateCharacterCommand extends BaseCommand {
         ...data,
         authorId: user.id,
       });
+
+      bot.emit(RoleplayEvents.CharacterCreate, createdCharacter);
 
       await modalSubmit.editReply({
         content: translate("createCharacterSuccess", {
