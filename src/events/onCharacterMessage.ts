@@ -26,10 +26,10 @@ export default class onCharacterMessage extends BaseEvent {
     if (messageOptions) {
       await message.channel.send(messageOptions);
 
-      const { isLevelUp } = data.character.getLevelingDetails();
       const [minXp, maxXp] = MIN_MAX_EXP_PER_MESSAGE;
       const xpEarned = CommonService.randomIntFromInterval(minXp, maxXp);
 
+      const { isLevelUp } = data.character.getLevelingDetails();
       if (isLevelUp(xpEarned)) {
         const updatedCharacter = await data.character.levelUp();
         const translate = data.author.getTranslateFunction();
@@ -40,6 +40,7 @@ export default class onCharacterMessage extends BaseEvent {
           })
         );
       }
+
       void CommonService.tryDeleteMessage(
         message,
         Duration.fromObject({ minutes: 1 }).as("milliseconds")
