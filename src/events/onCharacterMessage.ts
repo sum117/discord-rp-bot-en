@@ -1,18 +1,22 @@
 import { Events, type Message } from "discord.js";
 import { Duration } from "luxon";
 import { MIN_MAX_EXP_PER_MESSAGE } from "../data/constants";
+import enUS from "../locales/en-US.json";
+import ptBr from "../locales/pt-BR.json";
 import CharacterService from "../services/characterService";
 import CommonService from "../services/commonService";
+import PostService from "../services/postService";
 import { BaseEvent } from "./baseEvent";
 
 export default class onCharacterMessage extends BaseEvent {
   public constructor() {
     super({
       runsOn: Events.MessageCreate,
-      name: "onCharacterMessage",
-      description: "Event that listens for messages from characters.",
+      name: enUS.onCharacterMessageEventName,
+      nameLocalizations: { "pt-BR": ptBr.onCharacterMessageEventName },
+      description: enUS.onCharacterMessageDescription,
       descriptionLocalizations: {
-        "pt-BR": "Evento que escuta mensagens de personagens.",
+        "pt-BR": ptBr.onCharacterMessageDescription,
       },
     });
   }
@@ -24,7 +28,15 @@ export default class onCharacterMessage extends BaseEvent {
 
     const messageOptions = data.character.getCharacterPostFromMessage(message);
     if (messageOptions) {
-      await message.channel.send(messageOptions);
+      const sentPost = await message.channel.send(messageOptions);
+      await PostService.createPost({
+        authorId: message.author.id,
+        content: sentPost.content,
+        messageId: sentPost.id,
+        channelId: sentPost.channel.id,
+        guildId: sentPost.guild?.id ?? "",
+        characters: [data.character],
+      });
 
       const [minXp, maxXp] = MIN_MAX_EXP_PER_MESSAGE;
       const xpEarned = CommonService.randomIntFromInterval(minXp, maxXp);

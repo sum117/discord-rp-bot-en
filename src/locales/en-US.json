@@ -19,5 +19,7 @@
   "createCharacterSuccess": "✅ Character with name {{characterName}} created successfully.",
   "languageUpdated": "✅ Language updated to {{language}}.",
   "invalidImageUrl": "❌ Invalid image URL. Please try again. Your image URL should start with https and end with .jpg, .jpeg, .png, or .gif.",
-  "characterLevelUp": "✨ Character {{characterName}} leveled up to level {{level}}!"
+  "characterLevelUp": "✨ Character {{characterName}} leveled up to level {{level}}!",
+  "onCharacterMessageDescription": "Triggered when a message is sent by a character",
+  "onCharacterMessageEventName": "on-character-message"
 }

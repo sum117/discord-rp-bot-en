@@ -106,7 +106,7 @@ export const postsToCharacters = sqliteTable(
     postId: text("postId")
       .notNull()
       .references(() => posts.messageId),
-    characterId: text("characterId")
+    characterId: integer("characterId")
       .notNull()
       .references(() => characters.id),
   },

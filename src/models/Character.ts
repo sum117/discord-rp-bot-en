@@ -1,4 +1,5 @@
 import {
+  AttachmentBuilder,
   Message,
   resolveColor,
   type APIEmbed,
@@ -73,6 +74,7 @@ export class Character implements CharacterType {
   public getCharacterPostFromMessage(
     message: Message
   ): BaseMessageOptions | null {
+    const data: BaseMessageOptions = {};
     const embed: APIEmbed = {
       title: this.name,
       color: resolveColor(
@@ -90,7 +92,21 @@ export class Character implements CharacterType {
       description: message.content,
     };
 
-    return { embeds: [embed] };
+    if (message.attachments.size) {
+      const parsedUrl = new URL(message.attachments.first()!.url);
+      parsedUrl.search = "";
+
+      const fileName = parsedUrl.pathname.split("/").pop();
+      if (fileName && CommonService.isAbsoluteImageUrl(parsedUrl.toString())) {
+        const attachment = new AttachmentBuilder(parsedUrl.toString()).setName(
+          fileName
+        );
+        data.files = [attachment];
+        embed.image = { url: "attachment://" + fileName };
+      }
+    }
+
+    return { embeds: [embed], ...data };
   }
 
   public async levelUp() {

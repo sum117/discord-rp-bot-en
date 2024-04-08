@@ -93,9 +93,10 @@ export default class CharacterService {
   public static async createCharacter(
     characterData: typeof characters.$inferInsert
   ) {
-    const createdCharacter = (
-      await db.insert(characters).values(characterData).returning()
-    ).at(0);
+    const [createdCharacter] = await db
+      .insert(characters)
+      .values(characterData)
+      .returning();
     if (!createdCharacter) {
       throw new Error(
         `Failed to create character in database for user ${
@@ -110,13 +111,11 @@ export default class CharacterService {
     if (data instanceof Character) {
       data = data.toJson();
     }
-    const updatedCharacter = (
-      await db
-        .update(characters)
-        .set(data)
-        .where(eq(characters.id, data.id))
-        .returning()
-    ).at(0);
+    const [updatedCharacter] = await db
+      .update(characters)
+      .set(data)
+      .where(eq(characters.id, data.id))
+      .returning();
 
     if (!updatedCharacter) {
       throw new Error(

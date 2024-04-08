@@ -3,6 +3,7 @@ import {
   Events,
   GatewayIntentBits,
   InteractionType,
+  Partials,
   type ClientEvents,
 } from "discord.js";
 import { readdirSync } from "fs";
@@ -97,6 +98,7 @@ export const bot = new RoleplayBot({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.DirectMessages,
   ],
+  partials: [Partials.Reaction],
 });
 bot.setUpEvents();
 

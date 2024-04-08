@@ -4,8 +4,9 @@ export type BaseEventData = {
   // TODO: implement more later if needed
   runsOn: keyof RoleplayBotEventPayloads;
   name: string;
+  nameLocalizations?: Record<string, string>;
   description: string;
-  descriptionLocalizations: Record<string, string>;
+  descriptionLocalizations?: Record<string, string>;
 };
 export abstract class BaseEvent {
   public runsOn: BaseEventData["runsOn"];
