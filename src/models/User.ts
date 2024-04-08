@@ -27,4 +27,15 @@ export class User implements UserType {
     this.preferredLanguage = language;
     return this;
   }
+
+  public toJson(): UserType {
+    return {
+      id: this.id,
+      joinedBotAt: this.joinedBotAt,
+      level: this.level,
+      preferredLanguage: this.preferredLanguage,
+      exp: this.exp,
+      currentCharacterId: this.currentCharacterId,
+    };
+  }
 }

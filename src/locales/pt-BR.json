@@ -18,5 +18,6 @@
   "chooseBotLanguageCommandOptionDescription": "Linguagem para usar",
   "languageUpdated": "✅ Idioma alterado para {{language}}.",
   "createCharacterSuccess": "✅ Personagem com nome {{characterName}} criado com sucesso.",
-  "invalidImageUrl": "❌ URL de Imagem Inválida. Por favor, tente novamente. A URL de sua imagem deve terminar com .jpg, .jpeg, .png, or .gif."
+  "invalidImageUrl": "❌ URL de Imagem Inválida. Por favor, tente novamente. A URL de sua imagem deve terminar com .jpg, .jpeg, .png, or .gif.",
+  "characterLevelUp": "✨ {{characterName}} subiu de nível! Seu novo nível é {{level}}!"
 }

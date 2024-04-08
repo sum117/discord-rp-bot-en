@@ -1,17 +1,11 @@
-import {
-  Message,
-  TextInputStyle,
-  resolveColor,
-  type APIEmbed,
-  type BaseMessageOptions,
-  type HexColorString,
-} from "discord.js";
+import { TextInputStyle } from "discord.js";
+import { eq } from "drizzle-orm";
 import Modal, { TextInputLength } from "../components/Modal";
 import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
 import db from "../database";
 import { translateFactory } from "../i18n";
+import { Character, type CharacterType } from "../models/Character";
 import { characters } from "../schema";
-import CommonService from "./commonService";
 import UserService from "./userService";
 
 export default class CharacterService {
@@ -62,7 +56,7 @@ export default class CharacterService {
       });
   }
 
-  public static async getCurrentCharacterByUser(userId: string) {
+  public static async getCurrentCharacterByUserId(userId: string) {
     const author = await UserService.getOrCreateUser(userId);
     if (!author.currentCharacterId) {
       console.log(`User ${author.id} doesn't have a character selected.`);
@@ -76,47 +70,24 @@ export default class CharacterService {
       );
       return null;
     }
-    return { author, character };
-  }
-
-  public static async buildCharacterPostFromMessage(
-    message: Message
-  ): Promise<BaseMessageOptions | null> {
-    const data = await this.getCurrentCharacterByUser(message.author.id);
-    if (!data?.character || !data?.author) {
-      return null;
-    }
-
-    const embed: APIEmbed = {
-      title: data.character.name,
-      color: resolveColor(
-        <HexColorString>data.character.embedColor ??
-          <HexColorString>CommonService.getRandomColor()
-      ),
-      footer: {
-        text: `⬆️ Level ${data.character.level} | 💡 ${data.character.exp} XP`,
-      },
-      thumbnail: { url: data.character.imageUrl },
-      author: {
-        name: data.character.title ?? message.author.username,
-        icon_url: data.character.title
-          ? undefined
-          : message.author.displayAvatarURL(),
-      },
-      description: message.content,
-    };
-
-    return { embeds: [embed] };
+    return { author, character: new Character(character) };
   }
 
   public static async getCharacterById(
     characterId: number,
     withAuthor = false
   ) {
-    return await db.query.characters.findFirst({
+    const character = await db.query.characters.findFirst({
       where: (characters, { eq }) => eq(characters.id, characterId),
       with: withAuthor ? { author: true } : {},
     });
+
+    if (!character) {
+      console.log(`Character with ID ${characterId} not found.`);
+      return null;
+    }
+
+    return new Character(character);
   }
 
   public static async createCharacter(
@@ -132,6 +103,28 @@ export default class CharacterService {
         }.\nCharacter Data: ${JSON.stringify(characterData)}`
       );
     }
-    return createdCharacter;
+    return new Character(createdCharacter);
+  }
+
+  public static async updateCharacter(data: Character | CharacterType) {
+    if (data instanceof Character) {
+      data = data.toJson();
+    }
+    const updatedCharacter = (
+      await db
+        .update(characters)
+        .set(data)
+        .where(eq(characters.id, data.id))
+        .returning()
+    ).at(0);
+
+    if (!updatedCharacter) {
+      throw new Error(
+        `Failed to update character in database for user ${
+          data.authorId
+        }.\nCharacter Data: ${JSON.stringify(data)}`
+      );
+    }
+    return new Character(updatedCharacter);
   }
 }

@@ -25,13 +25,7 @@ export default class UserService {
 
   public static async updateUser(user: User | typeof users.$inferInsert) {
     if (user instanceof User) {
-      user = {
-        id: user.id,
-        joinedBotAt: user.joinedBotAt,
-        level: user.level,
-        preferredLanguage: user.preferredLanguage,
-        exp: user.exp,
-      };
+      user = user.toJson();
     }
     const updatedUser = (
       await db.update(users).set(user).where(eq(users.id, user.id)).returning()
