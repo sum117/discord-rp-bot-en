@@ -145,7 +145,8 @@ export const itemsRelations = relations(items, ({ one, many }) => ({
 }));
 
 export const itemsCharacters = sqliteTable("itemsCharacters", {
-  itemId: text("itemId").primaryKey(),
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  itemId: text("itemId").notNull(),
   characterId: text("characterId").notNull(),
   quantity: integer("quantity").notNull().default(0),
   isEquipped: integer("isEquipped", { mode: "boolean" })
