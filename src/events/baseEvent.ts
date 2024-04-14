@@ -23,5 +23,5 @@ export abstract class BaseEvent {
 
   abstract execute(
     ...args: RoleplayBotEventPayloads[BaseEventData["runsOn"]]
-  ): void;
+  ): Promise<void>;
 }

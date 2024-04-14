@@ -1,11 +1,11 @@
-import { TextInputStyle } from "discord.js";
-import { eq } from "drizzle-orm";
+import { AutocompleteInteraction, TextInputStyle } from "discord.js";
+import { SQL, eq, like } from "drizzle-orm";
 import Modal, { TextInputLength } from "../components/Modal";
 import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
 import db from "../database";
 import { translateFactory } from "../i18n";
 import { Character, type CharacterType } from "../models/Character";
-import { characters } from "../schema";
+import { characters, usersToCharacters } from "../schema";
 import UserService from "./userService";
 
 export default class CharacterService {
@@ -26,7 +26,7 @@ export default class CharacterService {
         customId: TEXT_INPUT_CUSTOM_IDS.imageUrl,
         label: translate("modalCharacterImageUrlLabel"),
         placeholder: translate("modalCharacterImageUrlPlaceholder"),
-        maxLength: TextInputLength.Short,
+        maxLength: TextInputLength.Medium,
         style: TextInputStyle.Short,
         required: true,
       })
@@ -73,6 +73,19 @@ export default class CharacterService {
     return { author, character: new Character(character) };
   }
 
+  public static async getCharacterAutocomplete(
+    interaction: AutocompleteInteraction,
+    withUserGuard = true
+  ) {
+    const characterName = interaction.options.getFocused();
+    const characters = await CharacterService.getCharacters({
+      userId: withUserGuard ? interaction.user.id : undefined,
+      name: characterName,
+    });
+    void interaction.respond(
+      characters.map(({ name, id }) => ({ name, value: id }))
+    );
+  }
   public static async getCharacterById(
     characterId: number,
     withAuthor = false
@@ -93,18 +106,21 @@ export default class CharacterService {
   public static async createCharacter(
     characterData: typeof characters.$inferInsert
   ) {
-    const [createdCharacter] = await db
-      .insert(characters)
-      .values(characterData)
-      .returning();
-    if (!createdCharacter) {
-      throw new Error(
-        `Failed to create character in database for user ${
-          characterData.authorId
-        }.\nCharacter Data: ${JSON.stringify(characterData)}`
-      );
-    }
-    return new Character(createdCharacter);
+    return await db.transaction(async (transaction) => {
+      const [character] = await transaction
+        .insert(characters)
+        .values(characterData)
+        .returning();
+      if (!character) {
+        transaction.rollback();
+        return;
+      }
+      await transaction
+        .insert(usersToCharacters)
+        .values({ characterId: character.id, userId: character.authorId });
+
+      return new Character(character);
+    });
   }
 
   public static async updateCharacter(data: Character | CharacterType) {
@@ -125,5 +141,22 @@ export default class CharacterService {
       );
     }
     return new Character(updatedCharacter);
+  }
+
+  public static getCharacters({
+    name,
+    userId,
+  }: { name?: string; userId?: string } = {}) {
+    const filters: SQL[] = [];
+    if (name) {
+      filters.push(like(characters.name, `%${name}%`));
+    }
+    if (userId) {
+      filters.push(eq(characters.authorId, userId));
+    }
+    return db.query.characters.findMany({
+      orderBy: ({ id }, { asc }) => asc(id),
+      where: (_table, { and }) => and(...filters),
+    });
   }
 }

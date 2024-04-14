@@ -19,6 +19,10 @@ export default class CommonService {
     }
   }
 
+  public static splitCamelCaseString(input: string) {
+    return input.replace(/([a-z](?=[A-Z]))/g, "$1 ");
+  }
+
   public static async wait(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }

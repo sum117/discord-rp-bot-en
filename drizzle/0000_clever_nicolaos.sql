@@ -20,6 +20,7 @@ CREATE TABLE `characters` (
 	`exp` integer DEFAULT 0 NOT NULL,
 	`age` integer DEFAULT 18 NOT NULL,
 	`imageUrl` text NOT NULL,
+	`createdAt` integer DEFAULT (CURRENT_TIMESTAMP),
 	`birthday` integer,
 	`backstory` text,
 	`personality` text,
@@ -28,6 +29,7 @@ CREATE TABLE `characters` (
 	`gender` text,
 	`pronouns` text,
 	`title` text,
+	`lastPostAt` integer DEFAULT (CURRENT_TIMESTAMP),
 	`embedColor` text
 );
 --> statement-breakpoint
@@ -40,7 +42,8 @@ CREATE TABLE `items` (
 );
 --> statement-breakpoint
 CREATE TABLE `itemsCharacters` (
-	`itemId` text PRIMARY KEY NOT NULL,
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`itemId` text NOT NULL,
 	`characterId` text NOT NULL,
 	`quantity` integer DEFAULT 0 NOT NULL,
 	`isEquipped` integer DEFAULT false NOT NULL
@@ -56,7 +59,7 @@ CREATE TABLE `posts` (
 --> statement-breakpoint
 CREATE TABLE `postsToCharacters` (
 	`postId` text NOT NULL,
-	`characterId` text NOT NULL,
+	`characterId` integer NOT NULL,
 	PRIMARY KEY(`characterId`, `postId`),
 	FOREIGN KEY (`postId`) REFERENCES `posts`(`messageId`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE no action
@@ -64,9 +67,17 @@ CREATE TABLE `postsToCharacters` (
 --> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
-	`joinedBotAt` integer,
+	`joinedBotAt` integer DEFAULT (CURRENT_TIMESTAMP),
 	`level` integer DEFAULT 1 NOT NULL,
 	`preferredLanguage` text DEFAULT 'en-US' NOT NULL,
 	`exp` integer DEFAULT 0 NOT NULL,
 	`currentCharacterId` integer
+);
+--> statement-breakpoint
+CREATE TABLE `usersToCharacters` (
+	`userId` text NOT NULL,
+	`characterId` integer NOT NULL,
+	PRIMARY KEY(`characterId`, `userId`),
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE no action
 );

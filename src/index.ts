@@ -84,8 +84,12 @@ export class RoleplayBot extends Client {
     }
     for (const event of eventSet) {
       this.on(event, (...args) => {
-        eventClasses[event]?.forEach((eventClass) => {
-          eventClass.execute(...args);
+        eventClasses[event]?.forEach(async (eventClass) => {
+          try {
+            await eventClass.execute(...args);
+          } catch (error) {
+            console.error(error);
+          }
         });
       });
     }
@@ -97,6 +101,7 @@ export const bot = new RoleplayBot({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.Guilds,
   ],
   partials: [Partials.Reaction],
 });
@@ -107,14 +112,26 @@ bot.on(Events.ClientReady, async (readyClient) => {
   await bot.setUpApplicationCommands();
 });
 
-bot.on(Events.InteractionCreate, (interaction) => {
-  switch (interaction.type) {
-    case InteractionType.ApplicationCommand:
-      const command = bot.commands.get(interaction.commandName);
-      if (command) {
-        command.execute(interaction);
+bot.on(Events.InteractionCreate, async (interaction) => {
+  try {
+    switch (interaction.type) {
+      case InteractionType.ApplicationCommand: {
+        const command = bot.commands.get(interaction.commandName);
+        if (command) {
+          await command.execute(interaction);
+        }
+        break;
       }
-      break;
+      case InteractionType.ApplicationCommandAutocomplete: {
+        const command = bot.commands.get(interaction.commandName);
+        if (command) {
+          await command.data.autocomplete?.(interaction);
+        }
+        break;
+      }
+    }
+  } catch (error) {
+    console.error(error);
   }
 });
 

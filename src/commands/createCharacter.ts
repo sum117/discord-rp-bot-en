@@ -55,20 +55,25 @@ export default class CreateCharacterCommand extends BaseCommand {
         ...data,
         authorId: user.id,
       });
+      if (createdCharacter) {
+        bot.emit(RoleplayEvents.CharacterCreate, createdCharacter);
 
-      bot.emit(RoleplayEvents.CharacterCreate, createdCharacter);
-
-      await modalSubmit.editReply({
-        content: translate("createCharacterSuccess", {
-          characterName: createdCharacter.name,
-        }),
-        files: [
-          {
-            attachment: createdCharacter.imageUrl,
-            name: createdCharacter.imageUrl.split("/").pop(),
-          },
-        ],
-      });
+        await modalSubmit.editReply({
+          content: translate("createCharacterSuccess", {
+            characterName: createdCharacter.name,
+          }),
+          files: [
+            {
+              attachment: createdCharacter.imageUrl,
+              name: createdCharacter.imageUrl
+                .split("/")
+                .pop()
+                ?.split("?")
+                .shift(),
+            },
+          ],
+        });
+      }
     }
   }
 }

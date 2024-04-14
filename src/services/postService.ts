@@ -1,7 +1,9 @@
+import { DateTime } from "luxon";
 import db from "../database";
 import { Character } from "../models/Character";
 import { Post, type PostType } from "../models/Post";
 import { posts, postsToCharacters } from "../schema";
+import CharacterService from "./characterService";
 
 export default class PostService {
   public static async createPost(postData: PostType) {
@@ -19,6 +21,8 @@ export default class PostService {
         await transaction
           .insert(postsToCharacters)
           .values({ characterId: character.id, postId: post.messageId });
+        character.lastPostAt = DateTime.now().toJSDate();
+        await CharacterService.updateCharacter(character);
       }
 
       return new Post({ ...post, characters: postData.characters });

@@ -1,6 +1,9 @@
 import { Events, type Message } from "discord.js";
-import { Duration } from "luxon";
-import { MIN_MAX_EXP_PER_MESSAGE } from "../data/constants";
+import { DateTime } from "luxon";
+import {
+  MIN_MAX_EXP_PER_MESSAGE,
+  XP_COOLDOWN_MINUTES,
+} from "../data/constants";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
 import CharacterService from "../services/characterService";
@@ -21,6 +24,8 @@ export default class onCharacterMessage extends BaseEvent {
     });
   }
   async execute(message: Message<boolean>) {
+    if (message.author.bot) return;
+
     const data = await CharacterService.getCurrentCharacterByUserId(
       message.author.id
     );
@@ -29,6 +34,26 @@ export default class onCharacterMessage extends BaseEvent {
     const messageOptions = data.character.getCharacterPostFromMessage(message);
     if (messageOptions) {
       const sentPost = await message.channel.send(messageOptions);
+      const [minXp, maxXp] = MIN_MAX_EXP_PER_MESSAGE;
+      const xpEarned = CommonService.randomIntFromInterval(minXp, maxXp);
+
+      const { isLevelUp } = data.character.getLevelingDetails();
+      const hasPassedXpCooldown =
+        DateTime.now().diff(
+          DateTime.fromJSDate(data.character.lastPostAt ?? new Date()),
+          "minutes"
+        ).minutes >= XP_COOLDOWN_MINUTES;
+      if (isLevelUp(xpEarned) && hasPassedXpCooldown) {
+        const updatedCharacter = await data.character.levelUp();
+        const translate = data.author.getTranslateFunction();
+        await message.channel.send(
+          translate("characterLevelUp", {
+            level: updatedCharacter.level,
+            characterName: updatedCharacter.name,
+          })
+        );
+      }
+
       await PostService.createPost({
         authorId: message.author.id,
         content: sentPost.content,
@@ -38,25 +63,7 @@ export default class onCharacterMessage extends BaseEvent {
         characters: [data.character],
       });
 
-      const [minXp, maxXp] = MIN_MAX_EXP_PER_MESSAGE;
-      const xpEarned = CommonService.randomIntFromInterval(minXp, maxXp);
-
-      const { isLevelUp } = data.character.getLevelingDetails();
-      if (isLevelUp(xpEarned)) {
-        const updatedCharacter = await data.character.levelUp();
-        const translate = data.author.getTranslateFunction();
-        await message.channel.send(
-          translate("characterLevelUp", {
-            level: updatedCharacter.level,
-            name: updatedCharacter.name,
-          })
-        );
-      }
-
-      void CommonService.tryDeleteMessage(
-        message,
-        Duration.fromObject({ minutes: 1 }).as("milliseconds")
-      );
+      void CommonService.tryDeleteMessage(message);
     }
   }
 }

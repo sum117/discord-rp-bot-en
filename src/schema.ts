@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   integer,
   primaryKey,
@@ -8,7 +8,9 @@ import {
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
-  joinedBotAt: integer("joinedBotAt", { mode: "timestamp_ms" }),
+  joinedBotAt: integer("joinedBotAt", { mode: "timestamp_ms" }).default(
+    sql`(CURRENT_TIMESTAMP)`
+  ),
   level: integer("level").notNull().default(1),
   preferredLanguage: text("preferredLanguage", { enum: ["en-US", "pt-BR"] })
     .notNull()
@@ -18,9 +20,15 @@ export const users = sqliteTable("users", {
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({
-  characters: many(characters),
+  characters: many(usersToCharacters, {
+    relationName: "ownedBy",
+  }),
+  authoredCharacters: many(characters, {
+    relationName: "author",
+  }),
   posts: many(posts),
   currentCharacter: one(characters, {
+    relationName: "currentCharacter",
     fields: [users.currentCharacterId],
     references: [characters.id],
   }),
@@ -34,7 +42,9 @@ export const characters = sqliteTable("characters", {
   exp: integer("exp").notNull().default(0),
   age: integer("age").notNull().default(18),
   imageUrl: text("imageUrl").notNull(),
-
+  createdAt: integer("createdAt", { mode: "timestamp_ms" }).default(
+    sql`(CURRENT_TIMESTAMP)`
+  ),
   birthday: integer("birthday", { mode: "timestamp_ms" }),
   backstory: text("backstory"),
   personality: text("personality"),
@@ -43,20 +53,58 @@ export const characters = sqliteTable("characters", {
   gender: text("gender"),
   pronouns: text("pronouns"),
   title: text("title"),
+  lastPostAt: integer("lastPostAt", { mode: "timestamp_ms" }).default(
+    sql`(CURRENT_TIMESTAMP)`
+  ),
   embedColor: text("embedColor"),
 });
 
 export const charactersRelations = relations(characters, ({ one, many }) => ({
   author: one(users, {
+    relationName: "author",
     fields: [characters.authorId],
     references: [users.id],
   }),
-  currentUsers: many(users),
+  ownedBy: many(usersToCharacters, {
+    relationName: "ownedBy",
+  }),
+  currentUsers: many(users, {
+    relationName: "currentCharacter",
+  }),
   categories: many(categoriesToCharacters),
   posts: many(postsToCharacters),
   items: many(itemsCharacters),
 }));
 
+export const usersToCharacters = sqliteTable(
+  "usersToCharacters",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id),
+    characterId: integer("characterId")
+      .notNull()
+      .references(() => characters.id),
+  },
+  (table) => ({
+    primaryKey: primaryKey({ columns: [table.userId, table.characterId] }),
+  })
+);
+
+export const usersToCharactersRelations = relations(
+  usersToCharacters,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [usersToCharacters.userId],
+      references: [users.id],
+    }),
+    character: one(characters, {
+      relationName: "ownedBy",
+      fields: [usersToCharacters.characterId],
+      references: [characters.id],
+    }),
+  })
+);
 export const categories = sqliteTable("categories", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   authorId: text("authorId").notNull(),

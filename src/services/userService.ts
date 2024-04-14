@@ -4,15 +4,16 @@ import { User } from "../models/User";
 import { users } from "../schema";
 
 export default class UserService {
-  public static async getOrCreateUser(userId: string) {
-    const foundUser = (
-      await db.select().from(users).where(eq(users.id, userId))
-    ).at(0);
+  public static async getOrCreateUser(userId: string, withCharacters = false) {
+    const foundUser = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      with: withCharacters ? { characters: true } : {},
+    });
 
     if (!foundUser) {
       const createdUsers = await db
         .insert(users)
-        .values({ id: userId })
+        .values({ id: userId, joinedBotAt: new Date() })
         .returning();
       const createdUser = createdUsers.at(0);
       if (!createdUser) {

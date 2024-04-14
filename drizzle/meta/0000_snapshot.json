@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "e4cf1e63-a530-45b2-b0d4-391e9e5c386d",
+  "id": "da7a3f3b-7b80-4bd5-9a5e-447fdff6ad20",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "categories": {
@@ -147,6 +147,14 @@
           "notNull": true,
           "autoincrement": false
         },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        },
         "birthday": {
           "name": "birthday",
           "type": "integer",
@@ -202,6 +210,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "lastPostAt": {
+          "name": "lastPostAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "embedColor": {
           "name": "embedColor",
@@ -263,10 +279,17 @@
     "itemsCharacters": {
       "name": "itemsCharacters",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
         "itemId": {
           "name": "itemId",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -355,7 +378,7 @@
         },
         "characterId": {
           "name": "characterId",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -416,7 +439,8 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "level": {
           "name": "level",
@@ -453,6 +477,64 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "usersToCharacters": {
+      "name": "usersToCharacters",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "characterId": {
+          "name": "characterId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "usersToCharacters_userId_users_id_fk": {
+          "name": "usersToCharacters_userId_users_id_fk",
+          "tableFrom": "usersToCharacters",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "usersToCharacters_characterId_characters_id_fk": {
+          "name": "usersToCharacters_characterId_characters_id_fk",
+          "tableFrom": "usersToCharacters",
+          "tableTo": "characters",
+          "columnsFrom": [
+            "characterId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "usersToCharacters_userId_characterId_pk": {
+          "columns": [
+            "characterId",
+            "userId"
+          ],
+          "name": "usersToCharacters_userId_characterId_pk"
+        }
+      },
       "uniqueConstraints": {}
     }
   },
