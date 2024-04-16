@@ -44,7 +44,7 @@ export default class CreateCharacterCommand extends BaseCommand {
       await modalSubmit.deferReply({ ephemeral: true });
       const data = modal.getUserResponse(modalSubmit);
 
-      if (!CommonService.isAbsoluteImageUrl(data.imageUrl)) {
+      if (!CommonService.isAbsoluteImageUrl(data?.imageUrl)) {
         await modalSubmit.editReply({
           content: translate("invalidImageUrl"),
         });

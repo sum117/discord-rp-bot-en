@@ -4,19 +4,26 @@ import {
   ButtonBuilder,
   ButtonInteraction,
   Message,
+  StringSelectMenuBuilder,
+  TextInputStyle,
   resolveColor,
   type APIEmbed,
   type BaseMessageOptions,
   type HexColorString,
 } from "discord.js";
+import { Duration } from "luxon";
 import { Button } from "../components/Button";
+import Modal, { TextInputLength } from "../components/Modal";
+import { Select } from "../components/Select";
 import {
   ALL_PROFILE_FIELDS,
   BUTTON_CUSTOM_IDS,
   DATE_PROFILE_FIELDS,
+  EDITABLE_PROFILE_FIELDS,
   LEVELING_QUOTIENT,
   LONG_PROFILE_FIELDS,
   MAX_CHARACTER_LEVEL,
+  SELECT_CUSTOM_IDS,
 } from "../data/constants";
 import translate from "../i18n";
 import { characters } from "../schema";
@@ -33,7 +40,7 @@ export class Character implements CharacterType {
   public exp: number;
   public age: number;
   public imageUrl: string;
-  public birthday: Date | null;
+  public birthday: string | null;
   public backstory: string | null;
   public personality: string | null;
   public appearance: string | null;
@@ -99,10 +106,23 @@ export class Character implements CharacterType {
         xp >= expRequiredForNextLevel && this.level < MAX_CHARACTER_LEVEL,
     };
   }
-  public getFullCharacterProfile(
-    language: "en-US" | "pt-BR" = "en-US",
-    isEditing = false
-  ) {
+  public getFullCharacterProfile({
+    language = "en-US",
+    isEditing = true,
+    isCharOwner = false,
+  }: {
+    language: "en-US" | "pt-BR";
+    isEditing: boolean;
+    isCharOwner: boolean;
+  }) {
+    type CharacterProfileMessageOptions = BaseMessageOptions & {
+      components?: Array<
+        ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>
+      >;
+      buttons?: Button[];
+      selectMenu?: Select;
+    };
+
     const levelingDetails = this.getLevelingDetails();
     const embed = this.getBaseEmbed();
     const fields = ALL_PROFILE_FIELDS.filter(
@@ -122,13 +142,29 @@ export class Character implements CharacterType {
       inline: true,
     });
     embed.fields = fields;
-
-    if (!isEditing) {
+    const messageOptions: CharacterProfileMessageOptions = { embeds: [embed] };
+    if (isEditing) {
       const { buttons, actionRow } = this.getFullProfileButtons(language);
-      return { embeds: [embed], components: [actionRow], buttons };
+      const components: Array<
+        ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>
+      > = [actionRow];
+      if (isCharOwner) {
+        const selectEditMenu = this.getEditSelectMenu({
+          language,
+          isCharOwner,
+          isEditing,
+        });
+        components.push(
+          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents([
+            selectEditMenu.getAPIComponent(),
+          ])
+        );
+        messageOptions.selectMenu = selectEditMenu;
+      }
+      messageOptions.components = components;
+      messageOptions.buttons = buttons;
     }
-
-    return { embeds: [embed] };
+    return messageOptions;
   }
 
   public getCharacterPostFromMessage(
@@ -217,7 +253,71 @@ export class Character implements CharacterType {
       buttons,
     };
   }
+  public getEditSelectMenu({
+    language = "en-US",
+    isCharOwner = false,
+    isEditing = true,
+  }: {
+    language: "en-US" | "pt-BR";
+    isCharOwner: boolean;
+    isEditing: boolean;
+  }) {
+    return new Select({
+      customId: SELECT_CUSTOM_IDS.editCharacter,
+      options: EDITABLE_PROFILE_FIELDS.map((key) => {
+        return {
+          label: translate(`${key}Edit`, { lng: language }),
+          value: key,
+        };
+      }),
+      onSelection: async (selectMenuInteraction) => {
+        const selectedField = selectMenuInteraction.values.at(
+          0
+        ) as (typeof EDITABLE_PROFILE_FIELDS)[number];
 
+        const editPopup = new Modal<
+          Record<(typeof EDITABLE_PROFILE_FIELDS)[number], string>
+        >().addTextInput({
+          customId: selectedField,
+          style: TextInputStyle.Paragraph,
+          label: translate(selectedField, { lng: language }),
+          placeholder: translate(selectedField, { lng: language }),
+          maxLength: TextInputLength.Paragraph,
+          value: this.isDateField(selectedField)
+            ? Intl.DateTimeFormat(language).format(this[selectedField]!)
+            : this[selectedField]?.toString() ?? "",
+        });
+        await selectMenuInteraction.showModal(editPopup);
+        const modalSubmitInteraction =
+          await selectMenuInteraction.awaitModalSubmit({
+            time: Duration.fromObject({ minutes: 120 }).as("milliseconds"),
+          });
+        if (modalSubmitInteraction) {
+          const data = editPopup.getUserResponse(modalSubmitInteraction);
+          const updateCharacter = await CharacterService.updateCharacter({
+            ...this,
+            [selectedField]: data[selectedField],
+          });
+          const newProfile = updateCharacter.getFullCharacterProfile({
+            isCharOwner,
+            isEditing,
+            language,
+          });
+
+          await modalSubmitInteraction.editReply({
+            content: translate(`${selectedField}Set`, {
+              field: selectedField,
+              oldCharacterName: this.name,
+              characterName: updateCharacter.name,
+            }),
+          });
+          await selectMenuInteraction.message.edit({
+            embeds: newProfile.embeds,
+          });
+        }
+      },
+    });
+  }
   private showLongFieldEmbed(
     fieldKey: (typeof LONG_PROFILE_FIELDS)[number],
     language: "en-US" | "pt-BR" = "en-US"

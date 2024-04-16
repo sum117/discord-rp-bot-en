@@ -10,7 +10,11 @@ export const BUTTON_CUSTOM_IDS = {
   appearance: "appearance",
   backstory: "backstory",
   personality: "personality",
-};
+} as const;
+export const SELECT_CUSTOM_IDS = {
+  editCharacter: "editCharacter",
+} as const;
+
 export const MAX_CHARACTER_LEVEL = 100 as const;
 export const LEVELING_QUOTIENT = 1.3735 as const;
 export const MIN_MAX_EXP_PER_MESSAGE = [2.5, 5.0] as const;
@@ -39,11 +43,7 @@ export const LONG_PROFILE_FIELDS = [
   "personality",
 ] as const;
 
-export const DATE_PROFILE_FIELDS = [
-  "birthday",
-  "createdAt",
-  "lastPostAt",
-] as const;
+export const DATE_PROFILE_FIELDS = ["createdAt", "lastPostAt"] as const;
 
 export const ALL_PROFILE_FIELDS = [
   "backstory",

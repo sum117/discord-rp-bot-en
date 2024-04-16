@@ -56,7 +56,7 @@ export default class onCharacterMessage extends BaseEvent {
 
       await PostService.createPost({
         authorId: message.author.id,
-        content: sentPost.content,
+        content: message.content,
         messageId: sentPost.id,
         channelId: sentPost.channel.id,
         guildId: sentPost.guild?.id ?? "",

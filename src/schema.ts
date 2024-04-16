@@ -45,7 +45,7 @@ export const characters = sqliteTable("characters", {
   createdAt: integer("createdAt", { mode: "timestamp_ms" }).default(
     sql`(CURRENT_TIMESTAMP)`
   ),
-  birthday: integer("birthday", { mode: "timestamp_ms" }),
+  birthday: text("birthday"),
   backstory: text("backstory"),
   personality: text("personality"),
   appearance: text("appearance"),

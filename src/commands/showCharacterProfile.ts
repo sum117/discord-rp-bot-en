@@ -28,9 +28,12 @@ export default class ShowCharacterProfile extends BaseCommand {
     const character = await CharacterService.getCharacterById(characterId);
 
     if (character) {
-      const { buttons, ...messageOptions } = character.getFullCharacterProfile(
-        user.preferredLanguage
-      );
+      const { buttons, ...messageOptions } = character.getFullCharacterProfile({
+        language: user.preferredLanguage,
+        isEditing: false,
+        isCharOwner:
+          user.characters?.some((char) => char.id === character.id) ?? false,
+      });
       const characterPanelMessage = await interaction.editReply(messageOptions);
       if (buttons) {
         const tenMinutes = Duration.fromObject({ minutes: 10 }).as(
