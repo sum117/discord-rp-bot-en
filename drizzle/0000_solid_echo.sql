@@ -8,8 +8,8 @@ CREATE TABLE `categoriesToCharacters` (
 	`categoryId` text NOT NULL,
 	`characterId` text NOT NULL,
 	PRIMARY KEY(`categoryId`, `characterId`),
-	FOREIGN KEY (`categoryId`) REFERENCES `categories`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`categoryId`) REFERENCES `categories`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `characters` (
@@ -61,8 +61,8 @@ CREATE TABLE `postsToCharacters` (
 	`postId` text NOT NULL,
 	`characterId` integer NOT NULL,
 	PRIMARY KEY(`characterId`, `postId`),
-	FOREIGN KEY (`postId`) REFERENCES `posts`(`messageId`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`postId`) REFERENCES `posts`(`messageId`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `users` (
@@ -78,6 +78,6 @@ CREATE TABLE `usersToCharacters` (
 	`userId` text NOT NULL,
 	`characterId` integer NOT NULL,
 	PRIMARY KEY(`characterId`, `userId`),
-	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE cascade
 );

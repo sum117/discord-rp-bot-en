@@ -1,5 +1,6 @@
 import { Events, type Message } from "discord.js";
 import { DateTime } from "luxon";
+import { EditingState, bot } from "..";
 import { MIN_MAX_EXP_PER_MESSAGE, XP_COOLDOWN_MINUTES } from "../data/constants";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
@@ -21,12 +22,12 @@ export default class onCharacterMessage extends BaseEvent {
     });
   }
   async execute(message: Message<boolean>) {
-    if (message.author.bot) return;
+    if (message.author.bot || bot.isEditing.get(message.author.id) === EditingState.Editing) return;
 
     const data = await CharacterService.getCurrentCharacterByUserId(message.author.id);
     if (!data) return;
 
-    const messageOptions = data.character.getCharacterPostFromMessage(message);
+    const messageOptions = await data.character.getCharacterPostFromMessage(message);
     if (messageOptions) {
       const sentPost = await message.channel.send(messageOptions);
       const [minXp, maxXp] = MIN_MAX_EXP_PER_MESSAGE;
@@ -43,7 +44,7 @@ export default class onCharacterMessage extends BaseEvent {
           translate("characterLevelUp", {
             level: updatedCharacter.level,
             characterName: updatedCharacter.name,
-          }),
+          })
         );
       }
 

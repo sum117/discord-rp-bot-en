@@ -34,6 +34,10 @@ export default class UserService {
           where: (users, { eq }) => eq(users.id, userId),
         });
       }
+    } else {
+      foundUser = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.id, userId),
+      });
     }
 
     if (!foundUser) {

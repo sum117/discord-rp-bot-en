@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { DateTime } from "luxon";
 import db from "../database";
 import { Character } from "../models/Character";
@@ -38,5 +39,13 @@ export default class PostService {
       ...data[0]!.post,
       characters: data.map((postToCharacter) => new Character(postToCharacter.character)),
     });
+  }
+
+  public static async updatePostContentByMessageId(messageId: string, content: string) {
+    return await db.update(posts).set({ content }).where(eq(posts.messageId, messageId));
+  }
+
+  public static async deletePostByMessageId(messageId: string) {
+    return await db.delete(posts).where(eq(posts.messageId, messageId));
   }
 }

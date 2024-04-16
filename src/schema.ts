@@ -66,10 +66,10 @@ export const usersToCharacters = sqliteTable(
   {
     userId: text("userId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     characterId: integer("characterId")
       .notNull()
-      .references(() => characters.id),
+      .references(() => characters.id, { onDelete: "cascade" }),
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.userId, table.characterId] }),
@@ -105,10 +105,10 @@ export const categoriesToCharacters = sqliteTable(
   {
     categoryId: text("categoryId")
       .notNull()
-      .references(() => categories.id),
+      .references(() => categories.id, { onDelete: "cascade" }),
     characterId: text("characterId")
       .notNull()
-      .references(() => characters.id),
+      .references(() => characters.id, { onDelete: "cascade" }),
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.categoryId, table.characterId] }),
@@ -131,10 +131,10 @@ export const postsToCharacters = sqliteTable(
   {
     postId: text("postId")
       .notNull()
-      .references(() => posts.messageId),
+      .references(() => posts.messageId, { onDelete: "cascade" }),
     characterId: integer("characterId")
       .notNull()
-      .references(() => characters.id),
+      .references(() => characters.id, { onDelete: "cascade" }),
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.postId, table.characterId] }),

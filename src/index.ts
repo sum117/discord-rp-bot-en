@@ -25,11 +25,16 @@ export enum RoleplayEvents {
 export type RoleplayBotEvents = Events | RoleplayEvents;
 export type RoleplayBotEventPayloads = RoleplayEventPayloads & ClientEvents;
 
+export enum EditingState {
+  NotEditing = "notEditing",
+  Editing = "editing",
+}
 export class RoleplayBot extends Client {
+  public isEditing = new Map<string, EditingState>();
   public commands = new Map<string, BaseCommand>();
   public on<Event extends keyof RoleplayBotEventPayloads>(
     event: Event,
-    listener: (...args: RoleplayBotEventPayloads[Event]) => void,
+    listener: (...args: RoleplayBotEventPayloads[Event]) => void
   ): this;
   on(event: string | symbol, listener: (...args: unknown[]) => void): this {
     return super.on(event, listener);
@@ -88,6 +93,7 @@ export const bot = new RoleplayBot({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessageReactions,
   ],
   partials: [Partials.Reaction],
 });
@@ -127,5 +133,4 @@ bot.on(RoleplayEvents.CharacterUpdate, (character) => {});
 bot.on(RoleplayEvents.ItemCreate, (item) => {});
 bot.on(RoleplayEvents.ItemDelete, (item) => {});
 bot.on(RoleplayEvents.ItemUpdate, (item) => {});
-
 bot.login(Bun.env.BOT_TOKEN);
