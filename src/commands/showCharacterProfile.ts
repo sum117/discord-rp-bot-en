@@ -78,7 +78,7 @@ export default class ShowCharacterProfile extends BaseCommand {
       filter: (selectMenuInteraction) =>
         selectMenuInteraction.customId === selectMenu.customId && selectMenuInteraction.user.id === user.id,
       time: this._tenMinutes,
-      componentType: ComponentType.SelectMenu,
+      componentType: ComponentType.StringSelect,
     });
 
     selectMenuCollector.on("collect", async (selectMenuInteraction) => {
