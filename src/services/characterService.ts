@@ -9,9 +9,7 @@ import { characters, usersToCharacters } from "../schema";
 import UserService from "./userService";
 
 export default class CharacterService {
-  public static getCreateCharacterModal(
-    userOrServerLanguage: "pt-BR" | "en-US" = "pt-BR"
-  ) {
+  public static getCreateCharacterModal(userOrServerLanguage: "pt-BR" | "en-US" = "pt-BR") {
     const translate = translateFactory(userOrServerLanguage);
     return new Modal<Record<keyof typeof TEXT_INPUT_CUSTOM_IDS, string>>()
       .addTextInput({
@@ -65,31 +63,21 @@ export default class CharacterService {
 
     const character = await this.getCharacterById(author.currentCharacterId);
     if (!character) {
-      console.log(
-        `Character with ID ${author.currentCharacterId} not found for ${author.id}.`
-      );
+      console.log(`Character with ID ${author.currentCharacterId} not found for ${author.id}.`);
       return null;
     }
     return { author, character: new Character(character) };
   }
 
-  public static async getCharacterAutocomplete(
-    interaction: AutocompleteInteraction,
-    withUserGuard = true
-  ) {
+  public static async getCharacterAutocomplete(interaction: AutocompleteInteraction, withUserGuard = true) {
     const characterName = interaction.options.getFocused();
     const characters = await CharacterService.getCharacters({
       userId: withUserGuard ? interaction.user.id : undefined,
       name: characterName,
     });
-    void interaction.respond(
-      characters.map(({ name, id }) => ({ name, value: id }))
-    );
+    void interaction.respond(characters.map(({ name, id }) => ({ name, value: id })));
   }
-  public static async getCharacterById(
-    characterId: number,
-    withAuthor = false
-  ) {
+  public static async getCharacterById(characterId: number, withAuthor = false) {
     const character = await db.query.characters.findFirst({
       where: (characters, { eq }) => eq(characters.id, characterId),
       with: withAuthor ? { author: true } : {},
@@ -103,21 +91,14 @@ export default class CharacterService {
     return new Character(character);
   }
 
-  public static async createCharacter(
-    characterData: typeof characters.$inferInsert
-  ) {
+  public static async createCharacter(characterData: typeof characters.$inferInsert) {
     return await db.transaction(async (transaction) => {
-      const [character] = await transaction
-        .insert(characters)
-        .values(characterData)
-        .returning();
+      const [character] = await transaction.insert(characters).values(characterData).returning();
       if (!character) {
         transaction.rollback();
         return;
       }
-      await transaction
-        .insert(usersToCharacters)
-        .values({ characterId: character.id, userId: character.authorId });
+      await transaction.insert(usersToCharacters).values({ characterId: character.id, userId: character.authorId });
 
       return new Character(character);
     });
@@ -127,26 +108,17 @@ export default class CharacterService {
     if (data instanceof Character) {
       data = data.toJson();
     }
-    const [updatedCharacter] = await db
-      .update(characters)
-      .set(data)
-      .where(eq(characters.id, data.id))
-      .returning();
+    const [updatedCharacter] = await db.update(characters).set(data).where(eq(characters.id, data.id)).returning();
 
     if (!updatedCharacter) {
       throw new Error(
-        `Failed to update character in database for user ${
-          data.authorId
-        }.\nCharacter Data: ${JSON.stringify(data)}`
+        `Failed to update character in database for user ${data.authorId}.\nCharacter Data: ${JSON.stringify(data)}`,
       );
     }
     return new Character(updatedCharacter);
   }
 
-  public static getCharacters({
-    name,
-    userId,
-  }: { name?: string; userId?: string } = {}) {
+  public static getCharacters({ name, userId }: { name?: string; userId?: string } = {}) {
     const filters: SQL[] = [];
     if (name) {
       filters.push(like(characters.name, `%${name}%`));

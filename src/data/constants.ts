@@ -37,11 +37,7 @@ export const EDITABLE_PROFILE_FIELDS = [
   "embedColor",
 ] as const;
 
-export const LONG_PROFILE_FIELDS = [
-  "appearance",
-  "backstory",
-  "personality",
-] as const;
+export const LONG_PROFILE_FIELDS = ["appearance", "backstory", "personality"] as const;
 
 export const DATE_PROFILE_FIELDS = ["createdAt", "lastPostAt"] as const;
 

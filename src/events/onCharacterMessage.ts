@@ -1,9 +1,6 @@
 import { Events, type Message } from "discord.js";
 import { DateTime } from "luxon";
-import {
-  MIN_MAX_EXP_PER_MESSAGE,
-  XP_COOLDOWN_MINUTES,
-} from "../data/constants";
+import { MIN_MAX_EXP_PER_MESSAGE, XP_COOLDOWN_MINUTES } from "../data/constants";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
 import CharacterService from "../services/characterService";
@@ -26,9 +23,7 @@ export default class onCharacterMessage extends BaseEvent {
   async execute(message: Message<boolean>) {
     if (message.author.bot) return;
 
-    const data = await CharacterService.getCurrentCharacterByUserId(
-      message.author.id
-    );
+    const data = await CharacterService.getCurrentCharacterByUserId(message.author.id);
     if (!data) return;
 
     const messageOptions = data.character.getCharacterPostFromMessage(message);
@@ -39,10 +34,8 @@ export default class onCharacterMessage extends BaseEvent {
 
       const { isLevelUp } = data.character.getLevelingDetails();
       const hasPassedXpCooldown =
-        DateTime.now().diff(
-          DateTime.fromJSDate(data.character.lastPostAt ?? new Date()),
-          "minutes"
-        ).minutes >= XP_COOLDOWN_MINUTES;
+        DateTime.now().diff(DateTime.fromJSDate(data.character.lastPostAt ?? new Date()), "minutes").minutes >=
+        XP_COOLDOWN_MINUTES;
       if (isLevelUp(xpEarned) && hasPassedXpCooldown) {
         const updatedCharacter = await data.character.levelUp();
         const translate = data.author.getTranslateFunction();
@@ -50,7 +43,7 @@ export default class onCharacterMessage extends BaseEvent {
           translate("characterLevelUp", {
             level: updatedCharacter.level,
             characterName: updatedCharacter.name,
-          })
+          }),
         );
       }
 

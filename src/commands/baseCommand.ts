@@ -20,12 +20,7 @@ export abstract class BaseCommand {
     options: ApplicationCommandOptionData[];
     autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
   };
-  public constructor({
-    name,
-    description,
-    options,
-    autocomplete,
-  }: BaseCommandData) {
+  public constructor({ name, description, options, autocomplete }: BaseCommandData) {
     this.data = {
       name: name,
       description: description,

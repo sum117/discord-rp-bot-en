@@ -6,8 +6,7 @@ export default class onCharacterMessageReaction extends BaseEvent {
     super({
       runsOn: Events.MessageReactionAdd,
       name: "onCharacterMessageReaction",
-      description:
-        "Event that listens to reactions on messages and executes the corresponding action",
+      description: "Event that listens to reactions on messages and executes the corresponding action",
     });
   }
 

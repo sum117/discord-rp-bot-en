@@ -76,10 +76,7 @@ export class Character implements CharacterType {
   public getBaseEmbed(): APIEmbed {
     return {
       title: this.name,
-      color: resolveColor(
-        <HexColorString>this.embedColor ??
-          <HexColorString>CommonService.getRandomColor()
-      ),
+      color: resolveColor(<HexColorString>this.embedColor ?? <HexColorString>CommonService.getRandomColor()),
       footer: {
         text: `⬆️ Level ${this.level} | 💡 ${this.exp} XP`,
       },
@@ -87,9 +84,7 @@ export class Character implements CharacterType {
     };
   }
   public getLevelingDetails() {
-    const expRequiredForNextLevel = Math.floor(
-      Math.pow(this.level, LEVELING_QUOTIENT)
-    );
+    const expRequiredForNextLevel = Math.floor(Math.pow(this.level, LEVELING_QUOTIENT));
     const percentage = Math.floor((this.exp / expRequiredForNextLevel) * 100);
 
     const filledBar = "🟩";
@@ -98,12 +93,9 @@ export class Character implements CharacterType {
     const barFill = Math.floor((percentage / 100) * barLength);
     const barEmpty = barLength - barFill;
     return {
-      progressBar: `${filledBar.repeat(barFill)}${emptyBar.repeat(
-        barEmpty
-      )} ${percentage}%`,
+      progressBar: `${filledBar.repeat(barFill)}${emptyBar.repeat(barEmpty)} ${percentage}%`,
       expRequiredForNextLevel,
-      isLevelUp: (xp: number) =>
-        xp >= expRequiredForNextLevel && this.level < MAX_CHARACTER_LEVEL,
+      isLevelUp: (xp: number) => xp >= expRequiredForNextLevel && this.level < MAX_CHARACTER_LEVEL,
     };
   }
   public getFullCharacterProfile({
@@ -116,18 +108,14 @@ export class Character implements CharacterType {
     isCharOwner: boolean;
   }) {
     type CharacterProfileMessageOptions = BaseMessageOptions & {
-      components?: Array<
-        ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>
-      >;
+      components?: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
       buttons?: Button[];
       selectMenu?: Select;
     };
 
     const levelingDetails = this.getLevelingDetails();
     const embed = this.getBaseEmbed();
-    const fields = ALL_PROFILE_FIELDS.filter(
-      (key) => !LONG_PROFILE_FIELDS.includes(key)
-    ).map((key) => {
+    const fields = ALL_PROFILE_FIELDS.filter((key) => !LONG_PROFILE_FIELDS.includes(key)).map((key) => {
       return {
         name: translate(key, { lng: language }),
         value: this.isDateField(key)
@@ -145,9 +133,7 @@ export class Character implements CharacterType {
     const messageOptions: CharacterProfileMessageOptions = { embeds: [embed] };
     if (isEditing) {
       const { buttons, actionRow } = this.getFullProfileButtons(language);
-      const components: Array<
-        ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>
-      > = [actionRow];
+      const components: Array<ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>> = [actionRow];
       if (isCharOwner) {
         const selectEditMenu = this.getEditSelectMenu({
           language,
@@ -155,9 +141,7 @@ export class Character implements CharacterType {
           isEditing,
         });
         components.push(
-          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents([
-            selectEditMenu.getAPIComponent(),
-          ])
+          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents([selectEditMenu.getAPIComponent()]),
         );
         messageOptions.selectMenu = selectEditMenu;
       }
@@ -167,9 +151,7 @@ export class Character implements CharacterType {
     return messageOptions;
   }
 
-  public getCharacterPostFromMessage(
-    message: Message
-  ): BaseMessageOptions | null {
+  public getCharacterPostFromMessage(message: Message): BaseMessageOptions | null {
     const data: BaseMessageOptions = {};
     const embed = this.getBaseEmbed();
     embed.author = {
@@ -183,9 +165,7 @@ export class Character implements CharacterType {
 
       const fileName = parsedUrl.pathname.split("/").pop();
       if (fileName && CommonService.isAbsoluteImageUrl(parsedUrl.toString())) {
-        const attachment = new AttachmentBuilder(parsedUrl.toString()).setName(
-          fileName
-        );
+        const attachment = new AttachmentBuilder(parsedUrl.toString()).setName(fileName);
         data.files = [attachment];
         embed.image = { url: "attachment://" + fileName };
       }
@@ -224,14 +204,9 @@ export class Character implements CharacterType {
     };
   }
 
-  private isDateField(
-    key: string
-  ): key is (typeof DATE_PROFILE_FIELDS)[number] {
+  private isDateField(key: string): key is (typeof DATE_PROFILE_FIELDS)[number] {
     return (
-      typeof key === "string" &&
-      DATE_PROFILE_FIELDS.includes(key) &&
-      key in this &&
-      !!this[key as keyof CharacterType]
+      typeof key === "string" && DATE_PROFILE_FIELDS.includes(key) && key in this && !!this[key as keyof CharacterType]
     );
   }
 
@@ -247,9 +222,7 @@ export class Character implements CharacterType {
     });
 
     return {
-      actionRow: new ActionRowBuilder<ButtonBuilder>().addComponents(
-        buttons.map((button) => button.getAPIComponent())
-      ),
+      actionRow: new ActionRowBuilder<ButtonBuilder>().addComponents(buttons.map((button) => button.getAPIComponent())),
       buttons,
     };
   }
@@ -271,13 +244,9 @@ export class Character implements CharacterType {
         };
       }),
       onSelection: async (selectMenuInteraction) => {
-        const selectedField = selectMenuInteraction.values.at(
-          0
-        ) as (typeof EDITABLE_PROFILE_FIELDS)[number];
+        const selectedField = selectMenuInteraction.values.at(0) as (typeof EDITABLE_PROFILE_FIELDS)[number];
 
-        const editPopup = new Modal<
-          Record<(typeof EDITABLE_PROFILE_FIELDS)[number], string>
-        >().addTextInput({
+        const editPopup = new Modal<Record<(typeof EDITABLE_PROFILE_FIELDS)[number], string>>().addTextInput({
           customId: selectedField,
           style: TextInputStyle.Paragraph,
           label: translate(selectedField, { lng: language }),
@@ -288,10 +257,9 @@ export class Character implements CharacterType {
             : this[selectedField]?.toString() ?? "",
         });
         await selectMenuInteraction.showModal(editPopup);
-        const modalSubmitInteraction =
-          await selectMenuInteraction.awaitModalSubmit({
-            time: Duration.fromObject({ minutes: 120 }).as("milliseconds"),
-          });
+        const modalSubmitInteraction = await selectMenuInteraction.awaitModalSubmit({
+          time: Duration.fromObject({ minutes: 120 }).as("milliseconds"),
+        });
         if (modalSubmitInteraction) {
           const data = editPopup.getUserResponse(modalSubmitInteraction);
           const updateCharacter = await CharacterService.updateCharacter({
@@ -320,7 +288,7 @@ export class Character implements CharacterType {
   }
   private showLongFieldEmbed(
     fieldKey: (typeof LONG_PROFILE_FIELDS)[number],
-    language: "en-US" | "pt-BR" = "en-US"
+    language: "en-US" | "pt-BR" = "en-US",
   ): BaseMessageOptions {
     const embed = this.getBaseEmbed();
     delete embed.image;

@@ -22,9 +22,7 @@ export class Post implements PostType {
     this.characters = data.characters;
   }
 
-  public toJson<T extends boolean>(
-    withCharacters: T
-  ): T extends true ? PostType : Omit<PostType, "characters">;
+  public toJson<T extends boolean>(withCharacters: T): T extends true ? PostType : Omit<PostType, "characters">;
   public toJson(withCharacters = false) {
     const data = {
       messageId: this.messageId,

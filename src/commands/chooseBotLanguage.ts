@@ -1,7 +1,4 @@
-import {
-  ApplicationCommandOptionType,
-  ChatInputCommandInteraction,
-} from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
 import UserService from "../services/userService";
@@ -40,9 +37,7 @@ export default class ChooseBotLanguageComand extends BaseCommand {
     const user = await UserService.getOrCreateUser(interaction.user.id);
     const translate = user.getTranslateFunction();
 
-    const language = interaction.options.getString("language") as
-      | "en-US"
-      | "pt-BR";
+    const language = interaction.options.getString("language") as "en-US" | "pt-BR";
     if (!language) {
       await interaction.reply({
         ephemeral: true,
@@ -53,9 +48,7 @@ export default class ChooseBotLanguageComand extends BaseCommand {
 
     await interaction.deferReply({ ephemeral: true });
 
-    const updatedUser = await UserService.updateUser(
-      user.setPreferredLanguage(language)
-    );
+    const updatedUser = await UserService.updateUser(user.setPreferredLanguage(language));
     const updatedTranslate = updatedUser.getTranslateFunction();
     await interaction.editReply({
       content: updatedTranslate("languageUpdated", {

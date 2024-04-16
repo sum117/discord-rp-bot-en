@@ -31,30 +31,22 @@ export default class ShowCharacterProfile extends BaseCommand {
       const { buttons, ...messageOptions } = character.getFullCharacterProfile({
         language: user.preferredLanguage,
         isEditing: false,
-        isCharOwner:
-          user.characters?.some((char) => char.id === character.id) ?? false,
+        isCharOwner: user.characters?.some((char) => char.id === character.id) ?? false,
       });
       const characterPanelMessage = await interaction.editReply(messageOptions);
       if (buttons) {
-        const tenMinutes = Duration.fromObject({ minutes: 10 }).as(
-          "milliseconds"
-        );
+        const tenMinutes = Duration.fromObject({ minutes: 10 }).as("milliseconds");
 
-        const buttonCollector =
-          characterPanelMessage.createMessageComponentCollector({
-            filter: (buttonInteraction) =>
-              buttons
-                .map((button) => button.customId)
-                .includes(buttonInteraction.customId) &&
-              buttonInteraction.user.id === user.id,
-            time: tenMinutes,
-            componentType: ComponentType.Button,
-          });
+        const buttonCollector = characterPanelMessage.createMessageComponentCollector({
+          filter: (buttonInteraction) =>
+            buttons.map((button) => button.customId).includes(buttonInteraction.customId) &&
+            buttonInteraction.user.id === user.id,
+          time: tenMinutes,
+          componentType: ComponentType.Button,
+        });
 
         buttonCollector.on("collect", async (buttonInteraction) => {
-          const button = buttons.find(
-            (button) => button.customId === buttonInteraction.customId
-          );
+          const button = buttons.find((button) => button.customId === buttonInteraction.customId);
           if (button) {
             await button.onClick?.(buttonInteraction);
           }
@@ -64,9 +56,7 @@ export default class ShowCharacterProfile extends BaseCommand {
           try {
             await characterPanelMessage.edit({ components: [] });
           } catch (error) {
-            console.error(
-              `Error while removing buttons from character profile message: ${error}`
-            );
+            console.error(`Error while removing buttons from character profile message: ${error}`);
           }
         }, tenMinutes);
       }

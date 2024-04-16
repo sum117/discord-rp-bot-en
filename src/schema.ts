@@ -1,16 +1,9 @@
 import { relations, sql } from "drizzle-orm";
-import {
-  integer,
-  primaryKey,
-  sqliteTable,
-  text,
-} from "drizzle-orm/sqlite-core";
+import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
-  joinedBotAt: integer("joinedBotAt", { mode: "timestamp_ms" }).default(
-    sql`(CURRENT_TIMESTAMP)`
-  ),
+  joinedBotAt: integer("joinedBotAt", { mode: "timestamp_ms" }).default(sql`(CURRENT_TIMESTAMP)`),
   level: integer("level").notNull().default(1),
   preferredLanguage: text("preferredLanguage", { enum: ["en-US", "pt-BR"] })
     .notNull()
@@ -42,9 +35,7 @@ export const characters = sqliteTable("characters", {
   exp: integer("exp").notNull().default(0),
   age: integer("age").notNull().default(18),
   imageUrl: text("imageUrl").notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp_ms" }).default(
-    sql`(CURRENT_TIMESTAMP)`
-  ),
+  createdAt: integer("createdAt", { mode: "timestamp_ms" }).default(sql`(CURRENT_TIMESTAMP)`),
   birthday: text("birthday"),
   backstory: text("backstory"),
   personality: text("personality"),
@@ -53,9 +44,7 @@ export const characters = sqliteTable("characters", {
   gender: text("gender"),
   pronouns: text("pronouns"),
   title: text("title"),
-  lastPostAt: integer("lastPostAt", { mode: "timestamp_ms" }).default(
-    sql`(CURRENT_TIMESTAMP)`
-  ),
+  lastPostAt: integer("lastPostAt", { mode: "timestamp_ms" }).default(sql`(CURRENT_TIMESTAMP)`),
   embedColor: text("embedColor"),
 });
 
@@ -88,23 +77,20 @@ export const usersToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.userId, table.characterId] }),
-  })
+  }),
 );
 
-export const usersToCharactersRelations = relations(
-  usersToCharacters,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [usersToCharacters.userId],
-      references: [users.id],
-    }),
-    character: one(characters, {
-      relationName: "ownedBy",
-      fields: [usersToCharacters.characterId],
-      references: [characters.id],
-    }),
-  })
-);
+export const usersToCharactersRelations = relations(usersToCharacters, ({ one }) => ({
+  user: one(users, {
+    fields: [usersToCharacters.userId],
+    references: [users.id],
+  }),
+  character: one(characters, {
+    relationName: "ownedBy",
+    fields: [usersToCharacters.characterId],
+    references: [characters.id],
+  }),
+}));
 export const categories = sqliteTable("categories", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   authorId: text("authorId").notNull(),
@@ -131,22 +117,19 @@ export const categoriesToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.categoryId, table.characterId] }),
-  })
+  }),
 );
 
-export const categoriesToCharactersRelations = relations(
-  categoriesToCharacters,
-  ({ one }) => ({
-    category: one(categories, {
-      fields: [categoriesToCharacters.categoryId],
-      references: [categories.id],
-    }),
-    character: one(characters, {
-      fields: [categoriesToCharacters.characterId],
-      references: [characters.id],
-    }),
-  })
-);
+export const categoriesToCharactersRelations = relations(categoriesToCharacters, ({ one }) => ({
+  category: one(categories, {
+    fields: [categoriesToCharacters.categoryId],
+    references: [categories.id],
+  }),
+  character: one(characters, {
+    fields: [categoriesToCharacters.characterId],
+    references: [characters.id],
+  }),
+}));
 
 export const postsToCharacters = sqliteTable(
   "postsToCharacters",
@@ -160,22 +143,19 @@ export const postsToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.postId, table.characterId] }),
-  })
+  }),
 );
 
-export const postsToCharactersRelations = relations(
-  postsToCharacters,
-  ({ one }) => ({
-    post: one(posts, {
-      fields: [postsToCharacters.postId],
-      references: [posts.messageId],
-    }),
-    character: one(characters, {
-      fields: [postsToCharacters.characterId],
-      references: [characters.id],
-    }),
-  })
-);
+export const postsToCharactersRelations = relations(postsToCharacters, ({ one }) => ({
+  post: one(posts, {
+    fields: [postsToCharacters.postId],
+    references: [posts.messageId],
+  }),
+  character: one(characters, {
+    fields: [postsToCharacters.characterId],
+    references: [characters.id],
+  }),
+}));
 
 export const items = sqliteTable("items", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -197,24 +177,19 @@ export const itemsCharacters = sqliteTable("itemsCharacters", {
   itemId: text("itemId").notNull(),
   characterId: text("characterId").notNull(),
   quantity: integer("quantity").notNull().default(0),
-  isEquipped: integer("isEquipped", { mode: "boolean" })
-    .notNull()
-    .default(false),
+  isEquipped: integer("isEquipped", { mode: "boolean" }).notNull().default(false),
 });
 
-export const itemsCharactersRelations = relations(
-  itemsCharacters,
-  ({ one }) => ({
-    item: one(items, {
-      fields: [itemsCharacters.itemId],
-      references: [items.id],
-    }),
-    character: one(characters, {
-      fields: [itemsCharacters.characterId],
-      references: [characters.id],
-    }),
-  })
-);
+export const itemsCharactersRelations = relations(itemsCharacters, ({ one }) => ({
+  item: one(items, {
+    fields: [itemsCharacters.itemId],
+    references: [items.id],
+  }),
+  character: one(characters, {
+    fields: [itemsCharacters.characterId],
+    references: [characters.id],
+  }),
+}));
 
 export const posts = sqliteTable("posts", {
   messageId: text("messageId").primaryKey(),

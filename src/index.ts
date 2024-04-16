@@ -1,11 +1,4 @@
-import {
-  Client,
-  Events,
-  GatewayIntentBits,
-  InteractionType,
-  Partials,
-  type ClientEvents,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits, InteractionType, Partials, type ClientEvents } from "discord.js";
 import { readdirSync } from "fs";
 import { readdir } from "fs/promises";
 import { dirname, join } from "path";
@@ -36,22 +29,17 @@ export class RoleplayBot extends Client {
   public commands = new Map<string, BaseCommand>();
   public on<Event extends keyof RoleplayBotEventPayloads>(
     event: Event,
-    listener: (...args: RoleplayBotEventPayloads[Event]) => void
+    listener: (...args: RoleplayBotEventPayloads[Event]) => void,
   ): this;
   on(event: string | symbol, listener: (...args: unknown[]) => void): this {
     return super.on(event, listener);
   }
-  public emit<Event extends keyof RoleplayEventPayloads>(
-    event: Event,
-    ...args: RoleplayEventPayloads[Event]
-  ): boolean;
+  public emit<Event extends keyof RoleplayEventPayloads>(event: Event, ...args: RoleplayEventPayloads[Event]): boolean;
   emit(event: string | symbol, ...args: unknown[]): boolean {
     return super.emit(event, ...args);
   }
   public async setUpApplicationCommands() {
-    const commands = await readdir(
-      fileURLToPath(join(dirname(import.meta.url), "commands"))
-    );
+    const commands = await readdir(fileURLToPath(join(dirname(import.meta.url), "commands")));
     for (const command of commands) {
       const { default: Command } = await import(`./commands/${command}`);
       if (Command && Command.prototype instanceof BaseCommand) {
@@ -64,9 +52,7 @@ export class RoleplayBot extends Client {
   }
 
   public setUpEvents() {
-    const events = readdirSync(
-      fileURLToPath(join(dirname(import.meta.url), "events"))
-    );
+    const events = readdirSync(fileURLToPath(join(dirname(import.meta.url), "events")));
     const eventSet = new Set<keyof RoleplayBotEventPayloads>();
     const eventClasses: Record<string, BaseEvent[]> = {};
     for (const event of events) {

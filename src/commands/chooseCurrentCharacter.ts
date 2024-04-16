@@ -1,8 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import {
-  CHARACTER_AUTO_COMPLETE_NAME,
-  characterAutoComplete,
-} from "../data/shared";
+import { CHARACTER_AUTO_COMPLETE_NAME, characterAutoComplete } from "../data/shared";
 import CharacterService from "../services/characterService";
 import UserService from "../services/userService";
 import { BaseCommand } from "./baseCommand";
@@ -24,17 +21,12 @@ export default class ChooseCurrentCharacter extends BaseCommand {
   }
 
   async execute(interaction: ChatInputCommandInteraction) {
-    const characterId = interaction.options.getNumber(
-      CHARACTER_AUTO_COMPLETE_NAME,
-      true
-    );
+    const characterId = interaction.options.getNumber(CHARACTER_AUTO_COMPLETE_NAME, true);
     await interaction.deferReply({ ephemeral: true });
     const user = await UserService.getOrCreateUser(interaction.user.id, true);
     const translate = user.getTranslateFunction();
 
-    const hasCharacter = user.characters?.some(
-      (character) => character.id === characterId
-    );
+    const hasCharacter = user.characters?.some((character) => character.id === characterId);
     if (!hasCharacter) {
       await interaction.editReply({
         content: translate("characterNotFound"),

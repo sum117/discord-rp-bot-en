@@ -24,9 +24,7 @@ export default class CreateCharacterCommand extends BaseCommand {
   async execute(interaction: CommandInteraction) {
     const user = await UserService.getOrCreateUser(interaction.user.id);
     const translate = user.getTranslateFunction();
-    const modal = CharacterService.getCreateCharacterModal(
-      user.preferredLanguage
-    );
+    const modal = CharacterService.getCreateCharacterModal(user.preferredLanguage);
     await interaction.showModal(modal);
 
     const modalSubmit = await interaction
@@ -34,11 +32,7 @@ export default class CreateCharacterCommand extends BaseCommand {
         time: Duration.fromObject({ minutes: 120 }).as("milliseconds"),
         filter: (interaction) => interaction.user.id === user.id,
       })
-      .catch((error) =>
-        console.log(
-          `Didn't receive a response from the user ${user.id} in time.\n Error: ${error}`
-        )
-      );
+      .catch((error) => console.log(`Didn't receive a response from the user ${user.id} in time.\n Error: ${error}`));
 
     if (modalSubmit) {
       await modalSubmit.deferReply({ ephemeral: true });
@@ -65,11 +59,7 @@ export default class CreateCharacterCommand extends BaseCommand {
           files: [
             {
               attachment: createdCharacter.imageUrl,
-              name: createdCharacter.imageUrl
-                .split("/")
-                .pop()
-                ?.split("?")
-                .shift(),
+              name: createdCharacter.imageUrl.split("/").pop()?.split("?").shift(),
             },
           ],
         });

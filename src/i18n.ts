@@ -11,14 +11,10 @@ i18next.addResourceBundle("pt-BR", "locales", ptBr, true, true);
 
 export type TranslationKey = keyof typeof ptBr | keyof typeof enUS;
 
-export default function translate(
-  key: TranslationKey,
-  options?: TOptions
-): string {
+export default function translate(key: TranslationKey, options?: TOptions): string {
   return i18next.t(key, options);
 }
 
 export function translateFactory(lng: "pt-BR" | "en-US") {
-  return (key: TranslationKey, options?: TOptions) =>
-    translate(key, { lng, ...options });
+  return (key: TranslationKey, options?: TOptions) => translate(key, { lng, ...options });
 }

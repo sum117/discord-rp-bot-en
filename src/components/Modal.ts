@@ -60,11 +60,14 @@ export default class Modal<T extends Record<string, string | number>> {
   }
 
   public getUserResponse(interaction: ModalSubmitInteraction) {
-    return Object.keys(this.fields).reduce((accumulator, key) => {
-      return {
-        ...accumulator,
-        [key]: interaction.fields.getTextInputValue(key),
-      };
-    }, <T>{});
+    return Object.keys(this.fields).reduce(
+      (accumulator, key) => {
+        return {
+          ...accumulator,
+          [key]: interaction.fields.getTextInputValue(key),
+        };
+      },
+      <T>{},
+    );
   }
 }

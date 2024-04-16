@@ -1,10 +1,7 @@
 import { Message, type CommandInteraction } from "discord.js";
 
 export default class CommonService {
-  public static async tryDeleteMessage(
-    messageOrCommand: Message | CommandInteraction,
-    time?: number
-  ) {
+  public static async tryDeleteMessage(messageOrCommand: Message | CommandInteraction, time?: number) {
     try {
       if (time) {
         await CommonService.wait(time);

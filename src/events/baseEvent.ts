@@ -21,7 +21,5 @@ export abstract class BaseEvent {
     this.descriptionLocalizations = data.descriptionLocalizations;
   }
 
-  abstract execute(
-    ...args: RoleplayBotEventPayloads[BaseEventData["runsOn"]]
-  ): Promise<void>;
+  abstract execute(...args: RoleplayBotEventPayloads[BaseEventData["runsOn"]]): Promise<void>;
 }

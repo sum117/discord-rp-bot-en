@@ -1,7 +1,4 @@
-import {
-  ApplicationCommandOptionType,
-  type ApplicationCommandOptionData,
-} from "discord.js";
+import { ApplicationCommandOptionType, type ApplicationCommandOptionData } from "discord.js";
 
 export const CHARACTER_AUTO_COMPLETE_NAME = "character";
 export const characterAutoComplete: ApplicationCommandOptionData = {

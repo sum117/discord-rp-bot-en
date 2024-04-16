@@ -1,7 +1,4 @@
-import {
-  StringSelectMenuBuilder,
-  StringSelectMenuInteraction,
-} from "discord.js";
+import { StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
 
 type SelectMenuOption = {
   label: string;

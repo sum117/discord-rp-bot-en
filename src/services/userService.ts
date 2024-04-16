@@ -11,10 +11,7 @@ export default class UserService {
     });
 
     if (!foundUser) {
-      const createdUsers = await db
-        .insert(users)
-        .values({ id: userId, joinedBotAt: new Date() })
-        .returning();
+      const createdUsers = await db.insert(users).values({ id: userId, joinedBotAt: new Date() }).returning();
       const createdUser = createdUsers.at(0);
       if (!createdUser) {
         throw new Error("Failed to create user");
@@ -28,9 +25,7 @@ export default class UserService {
     if (user instanceof User) {
       user = user.toJson();
     }
-    const updatedUser = (
-      await db.update(users).set(user).where(eq(users.id, user.id)).returning()
-    ).at(0);
+    const updatedUser = (await db.update(users).set(user).where(eq(users.id, user.id)).returning()).at(0);
     if (!updatedUser) {
       throw new Error("Failed to update user");
     }
