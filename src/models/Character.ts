@@ -245,7 +245,6 @@ export class Character implements CharacterType {
       }),
       onSelection: async (selectMenuInteraction) => {
         const selectedField = selectMenuInteraction.values.at(0) as (typeof EDITABLE_PROFILE_FIELDS)[number];
-
         const editPopup = new Modal<Record<(typeof EDITABLE_PROFILE_FIELDS)[number], string>>().addTextInput({
           customId: selectedField,
           style: TextInputStyle.Paragraph,
@@ -256,6 +255,7 @@ export class Character implements CharacterType {
             ? Intl.DateTimeFormat(language).format(this[selectedField]!)
             : this[selectedField]?.toString() ?? "",
         });
+
         await selectMenuInteraction.showModal(editPopup);
         const modalSubmitInteraction = await selectMenuInteraction
           .awaitModalSubmit({
@@ -271,6 +271,17 @@ export class Character implements CharacterType {
             ...this,
             [selectedField]: data[selectedField],
           });
+
+          if (selectedField === "imageUrl") {
+            const isImageUrl = CommonService.isAbsoluteImageUrl(updateCharacter.imageUrl);
+            if (!isImageUrl) {
+              await modalSubmitInteraction.editReply({
+                content: translate("invalidImageUrl"),
+              });
+              return;
+            }
+          }
+
           const newProfile = updateCharacter.getFullCharacterProfile({
             isCharOwner,
             isEditing,
