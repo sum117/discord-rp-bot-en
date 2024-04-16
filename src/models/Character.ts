@@ -49,6 +49,7 @@ export class Character implements CharacterType {
   public title: string | null;
   public embedColor: string | null;
   public lastPostAt: Date | null;
+  public lastExpGainAt: Date | null;
   public createdAt: Date | null;
 
   public constructor(data: CharacterType) {
@@ -70,6 +71,7 @@ export class Character implements CharacterType {
     this.title = data.title;
     this.createdAt = data.createdAt;
     this.embedColor = data.embedColor;
+    this.lastExpGainAt = data.lastExpGainAt;
   }
 
   public getBaseEmbed(): APIEmbed {
@@ -171,6 +173,7 @@ export class Character implements CharacterType {
 
   public async levelUp() {
     this.level += 1;
+    this.lastExpGainAt = new Date();
     this.exp = 0;
     const updatedCharacter = await CharacterService.updateCharacter(this);
     return updatedCharacter;
@@ -196,6 +199,7 @@ export class Character implements CharacterType {
       title: this.title,
       embedColor: this.embedColor,
       lastPostAt: this.lastPostAt,
+      lastExpGainAt: this.lastExpGainAt,
     };
   }
 

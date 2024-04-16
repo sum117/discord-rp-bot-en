@@ -43,6 +43,7 @@ export const characters = sqliteTable("characters", {
   pronouns: text("pronouns"),
   title: text("title"),
   lastPostAt: integer("lastPostAt", { mode: "timestamp_ms" }).default(sql`(CURRENT_TIMESTAMP)`),
+  lastExpGainAt: integer("lastExpGainAt", { mode: "timestamp_ms" }).default(sql`(CURRENT_TIMESTAMP)`),
   embedColor: text("embedColor"),
 });
 

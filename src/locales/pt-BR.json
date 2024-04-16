@@ -84,5 +84,7 @@
   "exp": "🌟 Experiência",
   "notDefined": "❔ Não definido",
   "editPostFeedback": "✏️ Você agora tem {{time}} minutos para editar sua postagem. O que você escrever aqui substituirá o conteúdo do embed reagido.",
-  "editPostSuccess": "✅ Postagem editada com sucesso."
+  "editPostSuccess": "✅ Postagem editada com sucesso.",
+  "noCurrentCharacter": "❌ Nenhum personagem atual definido.",
+  "currentCharacterUnset": "✅ Personagem atual desmarcado."
 }

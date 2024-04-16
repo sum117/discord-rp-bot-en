@@ -28,6 +28,9 @@
   "age": "🎂 Age",
   "appearance": "👀 Appearance",
   "backstory": "📜 Backstory",
+  "noCurrentCharacter": "❌ No current character set.",
+  "currentCharacterUnset": "✅ Current character unset.",
+
   "editPostFeedback": "✏️ {{user}}, you have now {{time}} minutes to edit your post. Whatever you write here will replace your reacted embed's content.",
   "editPostSuccess": "✅ Post edited successfully.",
   "backstorySuffix": "{{characterName}}'s Backstory",

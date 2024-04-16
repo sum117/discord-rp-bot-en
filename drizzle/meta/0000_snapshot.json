@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "6725f742-b8e2-41b7-9bd2-f3d79a39f561",
+  "id": "c423f828-7e00-4f91-ad90-caaa87a427c8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "categories": {
@@ -213,6 +213,14 @@
         },
         "lastPostAt": {
           "name": "lastPostAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        },
+        "lastExpGainAt": {
+          "name": "lastExpGainAt",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,

@@ -30,6 +30,7 @@ CREATE TABLE `characters` (
 	`pronouns` text,
 	`title` text,
 	`lastPostAt` integer DEFAULT (CURRENT_TIMESTAMP),
+	`lastExpGainAt` integer DEFAULT (CURRENT_TIMESTAMP),
 	`embedColor` text
 );
 --> statement-breakpoint

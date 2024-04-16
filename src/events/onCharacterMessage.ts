@@ -35,7 +35,7 @@ export default class onCharacterMessage extends BaseEvent {
 
       const { isLevelUp } = data.character.getLevelingDetails();
       const hasPassedXpCooldown =
-        DateTime.now().diff(DateTime.fromJSDate(data.character.lastPostAt ?? new Date()), "minutes").minutes >=
+        DateTime.now().diff(DateTime.fromJSDate(data.character.lastExpGainAt ?? new Date()), "minutes").minutes >=
         XP_COOLDOWN_MINUTES;
       if (isLevelUp(xpEarned) && hasPassedXpCooldown) {
         const updatedCharacter = await data.character.levelUp();
