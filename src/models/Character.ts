@@ -141,7 +141,7 @@ export class Character implements CharacterType {
           isEditing,
         });
         components.push(
-          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents([selectEditMenu.getAPIComponent()]),
+          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents([selectEditMenu.getAPIComponent()])
         );
         messageOptions.selectMenu = selectEditMenu;
       }
@@ -257,9 +257,14 @@ export class Character implements CharacterType {
             : this[selectedField]?.toString() ?? "",
         });
         await selectMenuInteraction.showModal(editPopup);
-        const modalSubmitInteraction = await selectMenuInteraction.awaitModalSubmit({
-          time: Duration.fromObject({ minutes: 120 }).as("milliseconds"),
-        });
+        const modalSubmitInteraction = await selectMenuInteraction
+          .awaitModalSubmit({
+            time: Duration.fromObject({ minutes: 120 }).as("milliseconds"),
+          })
+          .catch(() => {
+            console.error("User took too long to submit the modal.");
+            return null;
+          });
         if (modalSubmitInteraction) {
           const data = editPopup.getUserResponse(modalSubmitInteraction);
           const updateCharacter = await CharacterService.updateCharacter({
@@ -288,7 +293,7 @@ export class Character implements CharacterType {
   }
   private showLongFieldEmbed(
     fieldKey: (typeof LONG_PROFILE_FIELDS)[number],
-    language: "en-US" | "pt-BR" = "en-US",
+    language: "en-US" | "pt-BR" = "en-US"
   ): BaseMessageOptions {
     const embed = this.getBaseEmbed();
     delete embed.image;
