@@ -102,5 +102,8 @@
   "pluginRemoved": "✅ Plugin removed successfully.",
   "currentPlugins": "Current Plugins",
   "availablePlugins": "Available Plugins",
-  "pluginDescription": "Description"
+  "pluginDescription": "Description",
+  "pluginAuthor": "Author",
+  "removePlugin": "Remove {{pluginName}}",
+  "addPlugin": "Add {{pluginName}}"
 }

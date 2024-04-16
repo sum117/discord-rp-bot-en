@@ -32,7 +32,7 @@ export default class ManagePlugin extends BaseCommand {
     if (!interaction.inCachedGuild()) return;
     const user = await UserService.getOrCreateUser(interaction.user.id);
     const translate = user.getTranslateFunction();
-    if (interaction.user.id !== "1163020628559937618") {
+    if (interaction.user.id !== interaction.guild.ownerId) {
       await interaction.reply({
         content: translate("mustBeServerOwner"),
       });
@@ -83,7 +83,9 @@ export default class ManagePlugin extends BaseCommand {
         return new Button({
           customId: botPlugin.name,
           style: alreadyHasPlugin ? ButtonStyle.Danger : ButtonStyle.Success,
-          label: label,
+          label: alreadyHasPlugin
+            ? translate("removePlugin", { pluginName: botPlugin.name })
+            : translate("addPlugin", { pluginName: botPlugin.name }),
           async onClick(buttonInteraction) {
             if (!buttonInteraction.inCachedGuild()) return;
             await buttonInteraction.deferUpdate();
@@ -115,6 +117,10 @@ export default class ManagePlugin extends BaseCommand {
             addPluginPanel.title =
               user.preferredLanguage === "pt-BR" ? botPlugin.nameLocalizations["pt-BR"] : botPlugin.name;
             addPluginPanel.fields = [
+              {
+                name: translate("pluginAuthor"),
+                value: botPlugin.author,
+              },
               {
                 name: translate("pluginDescription"),
                 value:

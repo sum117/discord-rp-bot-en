@@ -99,5 +99,8 @@
   "pluginRemoved": "✅ Plugin {{pluginName}} removido com sucesso.",
   "currentPlugins": " Plugins Atuais",
   "availablePlugins": "Plugins Disponíveis",
-  "pluginDescription": "Descrição"
+  "pluginDescription": "Descrição",
+  "pluginAuthor": "Autor",
+  "removePlugin": "Remover {{pluginName}}",
+  "addPlugin": "Adicionar {{pluginName}}"
 }
