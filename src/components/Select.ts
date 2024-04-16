@@ -13,14 +13,14 @@ type SelectMenuData = {
   placeholder?: string;
   disabled?: boolean;
   options: SelectMenuOption[];
-  onSelection: (interaction: StringSelectMenuInteraction) => void;
+  onSelection: (interaction: StringSelectMenuInteraction) => Promise<void>;
 };
 export class Select {
   public options: SelectMenuOption[];
   public customId: string;
   public placeholder?: string;
   public disabled?: boolean;
-  public onSelection: (interaction: StringSelectMenuInteraction) => void;
+  public onSelection: (interaction: StringSelectMenuInteraction) => Promise<void>;
 
   public constructor(data: SelectMenuData) {
     this.options = data.options;
