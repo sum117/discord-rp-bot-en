@@ -237,6 +237,8 @@ export class Character implements CharacterType {
   }) {
     return new Select({
       customId: SELECT_CUSTOM_IDS.editCharacter,
+      placeholder: translate("editCharacter", { lng: language, characterName: this.name }),
+      disabled: false,
       options: EDITABLE_PROFILE_FIELDS.map((key) => {
         return {
           label: translate(`${key}Edit`, { lng: language }),
@@ -247,10 +249,10 @@ export class Character implements CharacterType {
         const selectedField = selectMenuInteraction.values.at(0) as (typeof EDITABLE_PROFILE_FIELDS)[number];
         const editPopup = new Modal<Record<(typeof EDITABLE_PROFILE_FIELDS)[number], string>>().addTextInput({
           customId: selectedField,
-          style: TextInputStyle.Paragraph,
+          style: LONG_PROFILE_FIELDS.includes(selectedField) ? TextInputStyle.Paragraph : TextInputStyle.Short,
           label: translate(selectedField, { lng: language }),
-          placeholder: translate(selectedField, { lng: language }),
-          maxLength: TextInputLength.Paragraph,
+          placeholder: translate(`${selectedField}InputPlaceholder`, { lng: language }),
+          maxLength: LONG_PROFILE_FIELDS.includes(selectedField) ? TextInputLength.Paragraph : TextInputLength.Medium,
           value: this.isDateField(selectedField)
             ? Intl.DateTimeFormat(language).format(this[selectedField]!)
             : this[selectedField]?.toString() ?? "",
@@ -266,6 +268,7 @@ export class Character implements CharacterType {
             return null;
           });
         if (modalSubmitInteraction) {
+          await modalSubmitInteraction.deferReply();
           const data = editPopup.getUserResponse(modalSubmitInteraction);
           const updateCharacter = await CharacterService.updateCharacter({
             ...this,
@@ -290,7 +293,7 @@ export class Character implements CharacterType {
 
           await modalSubmitInteraction.editReply({
             content: translate(`${selectedField}Set`, {
-              field: selectedField,
+              lng: language,
               oldCharacterName: this.name,
               characterName: updateCharacter.name,
             }),

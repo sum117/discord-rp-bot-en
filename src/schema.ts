@@ -13,9 +13,7 @@ export const users = sqliteTable("users", {
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({
-  characters: many(usersToCharacters, {
-    relationName: "ownedBy",
-  }),
+  characters: many(usersToCharacters),
   authoredCharacters: many(characters, {
     relationName: "author",
   }),
@@ -54,9 +52,7 @@ export const charactersRelations = relations(characters, ({ one, many }) => ({
     fields: [characters.authorId],
     references: [users.id],
   }),
-  ownedBy: many(usersToCharacters, {
-    relationName: "ownedBy",
-  }),
+  ownedBy: many(usersToCharacters),
   currentUsers: many(users, {
     relationName: "currentCharacter",
   }),
@@ -77,7 +73,7 @@ export const usersToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.userId, table.characterId] }),
-  }),
+  })
 );
 
 export const usersToCharactersRelations = relations(usersToCharacters, ({ one }) => ({
@@ -86,7 +82,6 @@ export const usersToCharactersRelations = relations(usersToCharacters, ({ one })
     references: [users.id],
   }),
   character: one(characters, {
-    relationName: "ownedBy",
     fields: [usersToCharacters.characterId],
     references: [characters.id],
   }),
@@ -117,7 +112,7 @@ export const categoriesToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.categoryId, table.characterId] }),
-  }),
+  })
 );
 
 export const categoriesToCharactersRelations = relations(categoriesToCharacters, ({ one }) => ({
@@ -143,7 +138,7 @@ export const postsToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.postId, table.characterId] }),
-  }),
+  })
 );
 
 export const postsToCharactersRelations = relations(postsToCharacters, ({ one }) => ({

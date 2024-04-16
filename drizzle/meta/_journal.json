@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1713241996857,
+      "tag": "0000_fresh_gabe_jones",
+      "breakpoints": true
+    }
+  ]
+}

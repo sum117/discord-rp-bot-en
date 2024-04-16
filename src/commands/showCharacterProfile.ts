@@ -1,9 +1,6 @@
-import { ComponentType, Message, type ChatInputCommandInteraction } from "discord.js";
+import { ComponentType, type ChatInputCommandInteraction } from "discord.js";
 import { Duration } from "luxon";
-import type { Button } from "../components/Button";
-import type { Select } from "../components/Select";
 import { characterAutoComplete } from "../data/shared";
-import type { User } from "../models/User";
 import CharacterService from "../services/characterService";
 import UserService from "../services/userService";
 import { BaseCommand } from "./baseCommand";
@@ -34,16 +31,38 @@ export default class ShowCharacterProfile extends BaseCommand {
     if (character) {
       const { buttons, selectMenu, ...messageOptions } = character.getFullCharacterProfile({
         language: user.preferredLanguage,
-        isEditing: false,
+        isEditing: true,
         isCharOwner: user.characters?.some((char) => char.id === character.id) ?? false,
       });
       const characterPanelMessage = await interaction.editReply(messageOptions);
 
       if (buttons) {
-        this.createButtons(characterPanelMessage, buttons, user);
+        const buttonCollector = characterPanelMessage.createMessageComponentCollector({
+          filter: (buttonInteraction) =>
+            buttons.map((button) => button.customId).includes(buttonInteraction.customId) &&
+            buttonInteraction.user.id === user.id,
+          time: this._tenMinutes,
+          componentType: ComponentType.Button,
+        });
+
+        buttonCollector.on("collect", async (buttonInteraction) => {
+          const button = buttons.find((button) => button.customId === buttonInteraction.customId);
+          if (button) {
+            await button.onClick?.(buttonInteraction);
+          }
+        });
       }
       if (selectMenu) {
-        this.createSelectMenu(characterPanelMessage, selectMenu, user);
+        const selectMenuCollector = characterPanelMessage.createMessageComponentCollector({
+          filter: (selectMenuInteraction) =>
+            selectMenuInteraction.customId === selectMenu.customId && selectMenuInteraction.user.id === user.id,
+          time: this._tenMinutes,
+          componentType: ComponentType.StringSelect,
+        });
+
+        selectMenuCollector.on("collect", async (selectMenuInteraction) => {
+          await selectMenu.onSelection(selectMenuInteraction);
+        });
       }
 
       setTimeout(async () => {
@@ -54,35 +73,5 @@ export default class ShowCharacterProfile extends BaseCommand {
         }
       }, this._tenMinutes);
     }
-  }
-
-  private createButtons(characterPanelMessage: Message<boolean>, buttons: Button[], user: User) {
-    const buttonCollector = characterPanelMessage.createMessageComponentCollector({
-      filter: (buttonInteraction) =>
-        buttons.map((button) => button.customId).includes(buttonInteraction.customId) &&
-        buttonInteraction.user.id === user.id,
-      time: this._tenMinutes,
-      componentType: ComponentType.Button,
-    });
-
-    buttonCollector.on("collect", async (buttonInteraction) => {
-      const button = buttons.find((button) => button.customId === buttonInteraction.customId);
-      if (button) {
-        await button.onClick?.(buttonInteraction);
-      }
-    });
-  }
-
-  private createSelectMenu(characterPanelMessage: Message, selectMenu: Select, user: User) {
-    const selectMenuCollector = characterPanelMessage.createMessageComponentCollector({
-      filter: (selectMenuInteraction) =>
-        selectMenuInteraction.customId === selectMenu.customId && selectMenuInteraction.user.id === user.id,
-      time: this._tenMinutes,
-      componentType: ComponentType.StringSelect,
-    });
-
-    selectMenuCollector.on("collect", async (selectMenuInteraction) => {
-      await selectMenu.onSelection(selectMenuInteraction);
-    });
   }
 }

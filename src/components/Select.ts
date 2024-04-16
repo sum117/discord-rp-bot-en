@@ -31,11 +31,10 @@ export class Select {
   }
 
   public getAPIComponent() {
-    const builder = new StringSelectMenuBuilder()
-      .setCustomId(this.customId)
-      .setDisabled(this.disabled)
-      .addOptions(...this.options);
-
+    const builder = new StringSelectMenuBuilder().setCustomId(this.customId).addOptions(...this.options);
+    if (this.disabled) {
+      builder.setDisabled(this.disabled);
+    }
     if (this.placeholder) {
       builder.setPlaceholder(this.placeholder);
     }
