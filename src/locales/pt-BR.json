@@ -25,6 +25,7 @@
   "currentCharacterSet": "✅ Personagem atual definido para {{characterName}}.",
   "characterNotFound": "❌ Personagem não encontrado. Por favor, tente novamente.",
   "name": "👋 Nome",
+  "money": "💰 Dinheiro",
   "age": "🎂 Idade",
   "appearance": "👀 Aparência",
   "backstory": "📜 História",
@@ -86,5 +87,17 @@
   "editPostFeedback": "✏️ Você agora tem {{time}} minutos para editar sua postagem. O que você escrever aqui substituirá o conteúdo do embed reagido.",
   "editPostSuccess": "✅ Postagem editada com sucesso.",
   "noCurrentCharacter": "❌ Nenhum personagem atual definido.",
-  "currentCharacterUnset": "✅ Personagem atual desmarcado."
+  "currentCharacterUnset": "✅ Personagem atual desmarcado.",
+  "mustBeServerOwner": "❌ You must be the server owner to use this command.",
+  "addPluginPanelTitle": "Adicionar Plugins",
+  "addPluginPanelDescription": "Adicione plugins ao seu servidor clicando nos botões abaixo. Você pode adicionar quantos plugins quiser.",
+  "userNoCharacter": "❌ {{user}} não tem personagem setado.",
+  "moneyAdded": "✅ {{amount}} moedas adicionadas com sucesso para {{characterName}}.",
+  "moneyRemoved": "✅ {{amount}} moedas removidas com sucesso de {{characterName}}.",
+  "notEnoughMoney": "❌ {{characterName}} não tem dinheiro suficiente para dar a {{targetCharacterName}} {{amount}} moedas.",
+  "pluginAdded": "✅ Plugin {{pluginName}} adicionado com sucesso.",
+  "pluginRemoved": "✅ Plugin {{pluginName}} removido com sucesso.",
+  "currentPlugins": " Plugins Atuais",
+  "availablePlugins": "Plugins Disponíveis",
+  "pluginDescription": "Descrição"
 }

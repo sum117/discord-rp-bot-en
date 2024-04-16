@@ -1,12 +1,11 @@
 import { Events, type Message } from "discord.js";
 import { DateTime } from "luxon";
-import { EditingState, bot } from "..";
+import { EditingState, RoleplayEvents, bot } from "..";
 import { MIN_MAX_EXP_PER_MESSAGE, XP_COOLDOWN_MINUTES } from "../data/constants";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
 import CharacterService from "../services/characterService";
 import CommonService from "../services/commonService";
-import PostService from "../services/postService";
 import { BaseEvent } from "./baseEvent";
 
 export default class onCharacterMessage extends BaseEvent {
@@ -29,7 +28,7 @@ export default class onCharacterMessage extends BaseEvent {
 
     const messageOptions = await data.character.getCharacterPostFromMessage(message);
     if (messageOptions) {
-      const sentPost = await message.channel.send(messageOptions);
+      bot.emit(RoleplayEvents.CharacterPost, message, messageOptions, data.character);
       const [minXp, maxXp] = MIN_MAX_EXP_PER_MESSAGE;
       const xpEarned = CommonService.randomIntFromInterval(minXp, maxXp);
 
@@ -47,16 +46,6 @@ export default class onCharacterMessage extends BaseEvent {
           })
         );
       }
-
-      await PostService.createPost({
-        authorId: message.author.id,
-        content: message.content,
-        messageId: sentPost.id,
-        channelId: sentPost.channel.id,
-        guildId: sentPost.guild?.id ?? "",
-        characters: [data.character],
-      });
-
       void CommonService.tryDeleteMessage(message);
     }
   }

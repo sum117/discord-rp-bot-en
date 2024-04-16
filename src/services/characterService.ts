@@ -1,11 +1,12 @@
 import { AutocompleteInteraction, TextInputStyle } from "discord.js";
-import { SQL, eq, like } from "drizzle-orm";
+import { SQL, and, eq, like } from "drizzle-orm";
 import Modal, { TextInputLength } from "../components/Modal";
 import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
 import db from "../database";
 import { translateFactory } from "../i18n";
 import { Character, type CharacterType } from "../models/Character";
-import { characters, usersToCharacters } from "../schema";
+import { characterServerData, characters, usersToCharacters } from "../schema";
+import { ServerService } from "./serverService";
 import UserService from "./userService";
 
 export default class CharacterService {
@@ -129,5 +130,82 @@ export default class CharacterService {
       orderBy: ({ id }, { asc }) => asc(id),
       where: (_table, { and }) => and(...filters),
     });
+  }
+
+  public static async addCharacterMoney({
+    characterId,
+    amount,
+    serverId,
+  }: {
+    characterId: number;
+    amount: number;
+    serverId: string;
+  }) {
+    const serverData = await ServerService.getOrCreateCharacterServerData(characterId, serverId);
+    return await db
+      .update(characterServerData)
+      .set({ money: serverData.money + amount })
+      .where(and(eq(characterServerData.characterId, characterId), eq(characterServerData.serverId, serverId)));
+  }
+
+  public static async giveCharacterMoney({
+    hostCharacterId,
+    targetCharacterId,
+    serverId,
+    hasPermission,
+    amount,
+  }: {
+    hostCharacterId: number;
+    hasPermission: boolean;
+    targetCharacterId: number;
+    serverId: string;
+    amount: number;
+  }) {
+    if (hostCharacterId === targetCharacterId || !hasPermission) {
+      return;
+    }
+
+    const hostServerData = await ServerService.getOrCreateCharacterServerData(hostCharacterId, serverId);
+    if (hostServerData.money < amount) {
+      return;
+    }
+
+    const targetServerData = await ServerService.getOrCreateCharacterServerData(targetCharacterId, serverId);
+    await db.transaction(async (transaction) => {
+      await transaction
+        .update(characterServerData)
+        .set({ money: hostServerData.money - amount })
+        .where(and(eq(characterServerData.characterId, hostCharacterId), eq(characterServerData.serverId, serverId)));
+      await transaction
+        .update(characterServerData)
+        .set({ money: targetServerData.money + amount })
+        .where(and(eq(characterServerData.characterId, targetCharacterId), eq(characterServerData.serverId, serverId)));
+    });
+
+    return targetServerData.money + amount;
+  }
+
+  public static async removeCharacterMoney({
+    characterId,
+    amount,
+    serverId,
+  }: {
+    characterId: number;
+    amount: number;
+    serverId: string;
+  }) {
+    const serverData = await ServerService.getOrCreateCharacterServerData(characterId, serverId);
+    if (serverData.money < amount) {
+      serverData.money = 0;
+    }
+    return await db
+      .update(characterServerData)
+      .set({ money: serverData.money - amount })
+      .where(and(eq(characterServerData.characterId, characterId), eq(characterServerData.serverId, serverId)));
+  }
+
+  public static async getCharacterMoney({ characterId, serverId }: { characterId: number; serverId: string }) {
+    const serverData = await ServerService.getOrCreateCharacterServerData(characterId, serverId);
+    return serverData.money;
   }
 }

@@ -57,10 +57,33 @@ export const charactersRelations = relations(characters, ({ one, many }) => ({
   currentUsers: many(users, {
     relationName: "currentCharacter",
   }),
+  serverData: many(characterServerData),
   categories: many(categoriesToCharacters),
   posts: many(postsToCharacters),
   items: many(itemsCharacters),
 }));
+
+export const servers = sqliteTable("servers", {
+  id: text("id").primaryKey(),
+  moneyPluginEnabled: integer("moneyPluginEnabled", { mode: "boolean" }).notNull().default(false),
+  dndPluginEnabled: integer("dndPluginEnabled", { mode: "boolean" }).notNull().default(false),
+});
+
+export const characterServerData = sqliteTable(
+  "characterServerData",
+  {
+    characterId: integer("characterId")
+      .notNull()
+      .references(() => characters.id, { onDelete: "cascade" }),
+    serverId: text("serverId")
+      .notNull()
+      .references(() => servers.id, { onDelete: "cascade" }),
+    money: integer("money").notNull().default(0),
+  },
+  (table) => ({
+    primaryKey: primaryKey({ columns: [table.characterId, table.serverId] }),
+  })
+);
 
 export const usersToCharacters = sqliteTable(
   "usersToCharacters",
