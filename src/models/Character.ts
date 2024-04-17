@@ -207,8 +207,8 @@ export class Character implements CharacterType {
     if (message.attachments.size) {
       const url = message.attachments.first()!.url;
       if (CommonService.isAbsoluteImageUrl(url)) {
-        const imageUrl = new URL(url);
-        const fileName = imageUrl.pathname.split("/").pop();
+        const parsedUrl = new URL(url);
+        const fileName = parsedUrl.pathname.split("/").pop();
         if (fileName) {
           embed.image = { url: `attachment://${fileName}` };
           const attachment = new AttachmentBuilder(url).setName(fileName);
