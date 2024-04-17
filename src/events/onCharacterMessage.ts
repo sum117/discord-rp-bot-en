@@ -23,6 +23,9 @@ export default class onCharacterMessage extends BaseEvent {
   async execute(message: Message<boolean>) {
     if (message.author.bot || bot.isEditing.get(message.author.id) === EditingState.Editing) return;
 
+    const outOfTopicPrefixRegex = /^(\/|\\|\(|\))/m;
+    if (message.content.match(outOfTopicPrefixRegex)) return;
+
     const data = await CharacterService.getCurrentCharacterByUserId(message.author.id);
     if (!data) return;
 

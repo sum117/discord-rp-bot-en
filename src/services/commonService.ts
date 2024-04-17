@@ -1,8 +1,6 @@
 import { Message, type CommandInteraction } from "discord.js";
-import ImgurClient from "imgur";
 
 export default class CommonService {
-  public static imgurClient = new ImgurClient({ clientId: Bun.env.IMGUR_CLIENT_ID });
   public static async tryDeleteMessage(messageOrCommand: Message | CommandInteraction, time?: number) {
     try {
       if (time) {
@@ -50,17 +48,6 @@ export default class CommonService {
     } catch (error) {
       return false;
     }
-  }
-
-  public static async uploadToImgur(imageUrl: string) {
-    const upload = await this.imgurClient.upload({
-      name: new URL(imageUrl).pathname.split("/").pop(),
-      image: imageUrl,
-      description: `Uploaded with RoleplayBot by Discord user at  ${new Date().toISOString()}`,
-      type: "url",
-      title: "RoleplayBot Image Upload",
-    });
-    return upload.data.link;
   }
 
   public static randomIntFromInterval(min: number, max: number) {

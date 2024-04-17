@@ -1,5 +1,6 @@
 import {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonInteraction,
   Message,
@@ -206,8 +207,13 @@ export class Character implements CharacterType {
     if (message.attachments.size) {
       const url = message.attachments.first()!.url;
       if (CommonService.isAbsoluteImageUrl(url)) {
-        const imageUrl = await CommonService.uploadToImgur(url);
-        embed.image = { url: imageUrl };
+        const imageUrl = new URL(url);
+        const fileName = imageUrl.pathname.split("/").pop();
+        if (fileName) {
+          embed.image = { url: `attachment://${fileName}` };
+          const attachment = new AttachmentBuilder(url).setName(fileName);
+          data.files = [attachment];
+        }
       }
     }
 
