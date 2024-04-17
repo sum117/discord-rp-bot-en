@@ -104,7 +104,11 @@ export default class ManagePlugin extends BaseCommand {
                 for (const addedPluginCommandData of botPlugin.getCommands()) {
                   await interaction.guild.commands.create(addedPluginCommandData);
                 }
-                await buttonInteraction.editReply({ content: translate("pluginAdded") });
+                await buttonInteraction.editReply({
+                  content: translate("pluginAdded", {
+                    pluginName: botPlugin.name,
+                  }),
+                });
               }
             }
             const updatedServer = await ServerService.getOrCreateServer(buttonInteraction.guildId);
