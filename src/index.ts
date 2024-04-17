@@ -9,12 +9,24 @@ import {
   type BaseMessageOptions,
   type ClientEvents,
 } from "discord.js";
-import { readdirSync } from "fs";
-import { readdir } from "fs/promises";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+
+/**
+ * Currently, bun build doesn't support import * from index files, so I have to import the commands one by one to make sure they are included in the build.
+ * This is a workaround until this issue is fixed:
+ */
 import { BaseCommand } from "./commands/baseCommand";
+import ChooseBotLanguageComand from "./commands/chooseBotLanguage";
+import ChooseCurrentCharacterCommand from "./commands/chooseCurrentCharacter";
+import CreateCharacterCommand from "./commands/createCharacter";
+import ManagePluginsCommand from "./commands/managePlugins";
+import RemoveCurrentCharacterCommand from "./commands/removeCurrentCharacter";
+import ShowCharacterProfileCommand from "./commands/showCharacterProfile";
 import { BaseEvent } from "./events/baseEvent";
+import onCharacterMessageEvent from "./events/onCharacterMessage";
+import onCharacterMessageReactioEvent from "./events/onCharacterMessageReaction";
+/**
+ *  ------------------------------------------------------------------------------
+ */
 import type { Character } from "./models/Character";
 import type { User } from "./models/User";
 import { moneyPlugin } from "./plugins/moneyPlugin";
@@ -71,10 +83,15 @@ export class RoleplayBot extends Client {
     return super.emit(event, ...args);
   }
   public async setUpApplicationCommands() {
-    const commands = await readdir(fileURLToPath(join(dirname(import.meta.url), "commands")));
-    for (const command of commands) {
-      const { default: Command } = await import(`./commands/${command}`);
-      if (Command && Command.prototype instanceof BaseCommand) {
+    for (const Command of [
+      ChooseBotLanguageComand,
+      ChooseCurrentCharacterCommand,
+      CreateCharacterCommand,
+      ManagePluginsCommand,
+      RemoveCurrentCharacterCommand,
+      ShowCharacterProfileCommand,
+    ]) {
+      if (Command.prototype instanceof BaseCommand) {
         const command = new Command();
         this.commands.set(command.data.name, command);
         await this.application?.commands.create(command.data);
@@ -84,12 +101,10 @@ export class RoleplayBot extends Client {
   }
 
   public setUpEvents() {
-    const events = readdirSync(fileURLToPath(join(dirname(import.meta.url), "events")));
     const eventSet = new Set<keyof RoleplayBotEventPayloads>();
     const eventClasses: Record<string, BaseEvent[]> = {};
-    for (const event of events) {
-      const { default: Event } = require(`./events/${event}`);
-      if (Event && Event.prototype instanceof BaseEvent) {
+    for (const Event of [onCharacterMessageEvent, onCharacterMessageReactioEvent]) {
+      if (Event.prototype instanceof BaseEvent) {
         const event: BaseEvent = new Event();
         eventSet.add(event.runsOn);
         if (!eventClasses[event.runsOn]) {

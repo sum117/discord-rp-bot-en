@@ -5,7 +5,8 @@
   "scripts": {
     "generate": "drizzle-kit generate:sqlite",
     "studio": "drizzle-kit studio",
-    "dev": "bun src/index.ts --watch"
+    "dev": "bun src/index.ts --watch",
+    "build": "bun build --target=bun --outfile=build/index.js src/index.ts"
   },
   "devDependencies": {
     "@total-typescript/ts-reset": "^0.5.1",

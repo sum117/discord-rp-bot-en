@@ -4,17 +4,6 @@ import CharacterService from "../services/characterService";
 import { ServerService } from "../services/serverService";
 import UserService from "../services/userService";
 
-const dependenciesMap = {
-  "add-money": {
-    databaseFn: CharacterService.addCharacterMoney,
-    translateKey: "moneyAdded",
-  },
-  "remove-money": {
-    databaseFn: CharacterService.removeCharacterMoney,
-    translateKey: "moneyRemoved",
-  },
-} as const;
-
 async function getEconomicDataFromInteraction(interaction: ChatInputCommandInteraction) {
   const discordUser = interaction.options.getUser("user", true);
   const user = await UserService.getOrCreateUser(discordUser.id);
@@ -27,8 +16,18 @@ async function getEconomicDataFromInteraction(interaction: ChatInputCommandInter
 
 async function handleMoneyCommand(
   interaction: ChatInputCommandInteraction,
-  dependencyKey: keyof typeof dependenciesMap
+  dependencyKey: "add-money" | "remove-money"
 ) {
+  const dependenciesMap = {
+    "add-money": {
+      databaseFn: CharacterService.addCharacterMoney,
+      translateKey: "moneyAdded",
+    },
+    "remove-money": {
+      databaseFn: CharacterService.removeCharacterMoney,
+      translateKey: "moneyRemoved",
+    },
+  } as const;
   if (!interaction.inCachedGuild()) {
     return;
   }
