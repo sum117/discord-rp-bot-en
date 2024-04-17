@@ -73,7 +73,50 @@ export class Character implements CharacterType {
     this.embedColor = data.embedColor;
     this.lastExpGainAt = data.lastExpGainAt;
   }
+  public setField(field: keyof CharacterType, value: string) {
+    switch (field) {
+      case "name":
+        this.name = value;
+        break;
+      case "age":
+        this.age = parseInt(value);
+        break;
+      case "imageUrl":
+        this.imageUrl = value;
+        break;
+      case "birthday":
+        this.birthday = value;
+        break;
+      case "backstory":
+        this.backstory = value;
+        break;
+      case "personality":
+        this.personality = value;
+        break;
+      case "appearance":
+        this.appearance = value;
+        break;
+      case "race":
+        this.race = value;
+        break;
+      case "gender":
+        this.gender = value;
+        break;
+      case "pronouns":
+        this.pronouns = value;
+        break;
+      case "title":
+        this.title = value;
+        break;
+      case "embedColor":
+        this.embedColor = value;
+        break;
+      default:
+        break;
+    }
 
+    return this;
+  }
   public getBaseEmbed(): APIEmbed {
     return {
       title: this.name,
@@ -269,10 +312,9 @@ export class Character implements CharacterType {
         if (modalSubmitInteraction) {
           await modalSubmitInteraction.deferReply();
           const data = editPopup.getUserResponse(modalSubmitInteraction);
-          const updateCharacter = await CharacterService.updateCharacter({
-            ...this,
-            [selectedField]: data[selectedField],
-          });
+          const updateCharacter = await CharacterService.updateCharacter(
+            this.setField(selectedField, data[selectedField])
+          );
 
           if (selectedField === "imageUrl") {
             const isImageUrl = CommonService.isAbsoluteImageUrl(updateCharacter.imageUrl);
@@ -304,6 +346,7 @@ export class Character implements CharacterType {
       },
     });
   }
+
   private showLongFieldEmbed(
     fieldKey: (typeof LONG_PROFILE_FIELDS)[number],
     language: "en-US" | "pt-BR" = "en-US"
