@@ -11,7 +11,7 @@
   "modalCharacterPersonalityPlaceholder": "Digite a personalidade do personagem",
   "createCharacterCommandName": "criar-personagem",
   "createCharacterCommandDescription": "Cria um personagem",
-  "chooseBotLanguageCommandName": "Escolher Idioma",
+  "chooseBotLanguageCommandName": "escolher-idioma",
   "chooseBotLanguageCommandDescription": "Escolhe o idioma do bot",
   "chooseBotLanguageCommandOptionName": "linguagem",
   "noLanguageSupplied": "❌ Nenhuma linguagem fornecida. Por favor, tente novamente.",

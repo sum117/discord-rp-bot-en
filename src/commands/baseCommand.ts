@@ -17,7 +17,12 @@ export type BaseCommandData = {
 
 export abstract class BaseCommand {
   public data: ApplicationCommandData & {
+    name: string;
     options: ApplicationCommandOptionData[];
+    description: string;
+    nameLocalizations?: LocalizationMap;
+    descriptionLocalizations?: LocalizationMap;
+    
     autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
   };
   public constructor({ name, description, options, autocomplete, ...rest}: BaseCommandData) {
