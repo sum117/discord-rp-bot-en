@@ -105,5 +105,6 @@
   "pluginDescription": "Description",
   "pluginAuthor": "Author",
   "removePlugin": "Remove {{pluginName}}",
-  "addPlugin": "Add {{pluginName}}"
+  "addPlugin": "Add {{pluginName}}",
+  "roll": "{{- emoji}} **{{characterName}}** rolled {{roll}}!"
 }

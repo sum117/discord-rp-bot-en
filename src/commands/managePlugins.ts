@@ -95,7 +95,7 @@ export default class ManagePlugin extends BaseCommand {
                 await buttonInteraction.editReply({ content: translate("pluginRemoved") });
                 for (const removedPluginCommandData of botPlugin.getCommands()) {
                   const toRemove = interaction.guild.commands.cache.find(
-                    (command) => command.name === removedPluginCommandData.name
+                    (command) => command.name === removedPluginCommandData.name,
                   );
                   if (toRemove) await toRemove.delete();
                 }
@@ -146,7 +146,7 @@ export default class ManagePlugin extends BaseCommand {
       embeds: [addPluginPanel],
       components: [
         new ActionRowBuilder<ButtonBuilder>().addComponents(
-          getPluginButtons(currentServerPlugins).map((button) => button.getAPIComponent())
+          getPluginButtons(currentServerPlugins).map((button) => button.getAPIComponent()),
         ),
       ],
     });

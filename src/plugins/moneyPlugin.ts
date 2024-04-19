@@ -16,7 +16,7 @@ async function getEconomicDataFromInteraction(interaction: ChatInputCommandInter
 
 async function handleMoneyCommand(
   interaction: ChatInputCommandInteraction,
-  dependencyKey: "add-money" | "remove-money"
+  dependencyKey: "add-money" | "remove-money",
 ) {
   const dependenciesMap = {
     "add-money": {
@@ -157,7 +157,7 @@ const giveMoneyCommand: PluginCommand = {
 
     const hostCharacterServerData = await ServerService.getOrCreateCharacterServerData(
       hostCurrentCharacter.character.id,
-      interaction.guild.id
+      interaction.guild.id,
     );
 
     if (hostCharacterServerData.money < amount) {
@@ -177,7 +177,7 @@ const giveMoneyCommand: PluginCommand = {
         amount,
         targetCharacterName: targetCharacter.name,
         hostCharacterName: hostCurrentCharacter.character.name,
-      })
+      }),
     );
   },
 };

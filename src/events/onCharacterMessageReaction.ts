@@ -50,7 +50,7 @@ export default class onCharacterMessageReaction extends BaseEvent {
           translate("editPostFeedback", {
             user: userWhoReacted.displayName,
             time: 15,
-          })
+          }),
         );
         bot.isEditing.set(post.authorId, EditingState.Editing);
         void CommonService.tryDeleteMessage(feedback, Duration.fromObject({ seconds: 10 }).as("milliseconds"));
@@ -62,11 +62,11 @@ export default class onCharacterMessageReaction extends BaseEvent {
             await PostService.updatePostContentByMessageId(post.messageId, collectedMessage.content);
             void CommonService.tryDeleteMessage(collectedMessage);
             const successFeedback = await collectedMessage.channel.send(
-              translate("editPostSuccess", { user: userWhoReacted.toString() })
+              translate("editPostSuccess", { user: userWhoReacted.toString() }),
             );
             void CommonService.tryDeleteMessage(
               successFeedback,
-              Duration.fromObject({ seconds: 5 }).as("milliseconds")
+              Duration.fromObject({ seconds: 5 }).as("milliseconds"),
             );
           } catch (error) {
             console.error(`Failed to edit message with ID ${post.messageId} for user ${userWhoReacted.id}`);

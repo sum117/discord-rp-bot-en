@@ -112,7 +112,7 @@ export default class CharacterService {
 
     if (!updatedCharacter) {
       throw new Error(
-        `Failed to update character in database for user ${data.authorId}.\nCharacter Data: ${JSON.stringify(data)}`
+        `Failed to update character in database for user ${data.authorId}.\nCharacter Data: ${JSON.stringify(data)}`,
       );
     }
     return new Character(updatedCharacter);

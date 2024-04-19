@@ -80,7 +80,7 @@ export default class ShowCharacterProfile extends BaseCommand {
           }, this._tenMinutes);
         },
         (messageOptions: BaseMessageOptions) => interaction.editReply(messageOptions),
-        interaction.guildId
+        interaction.guildId,
       );
     }
   }

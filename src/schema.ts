@@ -82,7 +82,7 @@ export const characterServerData = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.characterId, table.serverId] }),
-  })
+  }),
 );
 
 export const usersToCharacters = sqliteTable(
@@ -97,7 +97,7 @@ export const usersToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.userId, table.characterId] }),
-  })
+  }),
 );
 
 export const usersToCharactersRelations = relations(usersToCharacters, ({ one }) => ({
@@ -136,7 +136,7 @@ export const categoriesToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.categoryId, table.characterId] }),
-  })
+  }),
 );
 
 export const categoriesToCharactersRelations = relations(categoriesToCharacters, ({ one }) => ({
@@ -162,7 +162,7 @@ export const postsToCharacters = sqliteTable(
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.postId, table.characterId] }),
-  })
+  }),
 );
 
 export const postsToCharactersRelations = relations(postsToCharacters, ({ one }) => ({

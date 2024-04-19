@@ -1,3 +1,4 @@
+import { dndPlugin } from "@/plugins/dndPlugin";
 import { moneyPlugin } from "../plugins/moneyPlugin";
 import type { ServerType } from "../services/serverService";
 
@@ -16,6 +17,9 @@ export default class Server implements ServerType {
     if (this.moneyPluginEnabled) {
       plugins.push(moneyPlugin);
     }
+    if (this.dndPluginEnabled) {
+      plugins.push(dndPlugin);
+    }
 
     return plugins;
   }
@@ -24,12 +28,18 @@ export default class Server implements ServerType {
     if (pluginName === moneyPlugin.name) {
       this.moneyPluginEnabled = true;
     }
+    if (pluginName === dndPlugin.name) {
+      this.dndPluginEnabled = true;
+    }
     return this;
   }
 
   public removePlugin(pluginName: string) {
     if (pluginName === moneyPlugin.name) {
       this.moneyPluginEnabled = false;
+    }
+    if (pluginName == dndPlugin.name) {
+      this.dndPluginEnabled = false;
     }
     return this;
   }

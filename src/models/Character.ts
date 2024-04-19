@@ -186,7 +186,7 @@ export class Character implements CharacterType {
           isEditing,
         });
         components.push(
-          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents([selectEditMenu.getAPIComponent()])
+          new ActionRowBuilder<StringSelectMenuBuilder>().addComponents([selectEditMenu.getAPIComponent()]),
         );
         messageOptions.selectMenu = selectEditMenu;
       }
@@ -319,7 +319,7 @@ export class Character implements CharacterType {
           await modalSubmitInteraction.deferReply();
           const data = editPopup.getUserResponse(modalSubmitInteraction);
           const updateCharacter = await CharacterService.updateCharacter(
-            this.setField(selectedField, data[selectedField])
+            this.setField(selectedField, data[selectedField]),
           );
 
           if (selectedField === "imageUrl") {
@@ -355,7 +355,7 @@ export class Character implements CharacterType {
 
   private showLongFieldEmbed(
     fieldKey: (typeof LONG_PROFILE_FIELDS)[number],
-    language: "en-US" | "pt-BR" = "en-US"
+    language: "en-US" | "pt-BR" = "en-US",
   ): BaseMessageOptions {
     const embed = this.getBaseEmbed();
     delete embed.image;

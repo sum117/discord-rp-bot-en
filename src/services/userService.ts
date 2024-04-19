@@ -14,21 +14,24 @@ export default class UserService {
         with: { character: true, user: true },
       });
       if (userAndCharacterData.length) {
-        foundUser = userAndCharacterData.reduce((userObject, { user, character }) => {
-          if (!userObject.id) {
-            userObject = new User(user);
-          }
-
-          if (character) {
-            if (!userObject.characters) {
-              userObject.characters = [new Character(character)];
-            } else {
-              userObject.characters.push(new Character(character));
+        foundUser = userAndCharacterData.reduce(
+          (userObject, { user, character }) => {
+            if (!userObject.id) {
+              userObject = new User(user);
             }
-          }
 
-          return userObject;
-        }, <User>{});
+            if (character) {
+              if (!userObject.characters) {
+                userObject.characters = [new Character(character)];
+              } else {
+                userObject.characters.push(new Character(character));
+              }
+            }
+
+            return userObject;
+          },
+          <User>{},
+        );
       } else {
         foundUser = await db.query.users.findFirst({
           where: (users, { eq }) => eq(users.id, userId),

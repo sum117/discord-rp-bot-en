@@ -17,13 +17,13 @@ type PluginData = {
   exampleParagraphsLocalizations: Record<string, Array<string>>;
   author: string;
   commands: Array<PluginCommand>;
-  onBeforeCharacterPost?: (message: Message) => Promise<void>;
-  onAfterCharacterPost?: (message: Message) => Promise<void>;
+  onBeforeCharacterPost?: (message: Message, messageOptions: BaseMessageOptions, character: Character) => Promise<void>;
+  onAfterCharacterPost?: (message: Message, character: Character) => Promise<void>;
   onBeforeShowCharacterProfile?: (
     messageOptions: BaseMessageOptions,
     character: Character,
     user: User,
-    server: Server
+    server: Server,
   ) => Promise<void>;
   onAfterShowCharacterProfile?: (message: Message, character: Character, user: User) => Promise<void>;
 };
@@ -37,13 +37,17 @@ export default class Plugin {
   public exampleParagraphsLocalizations: Record<string, Array<string>>;
   public author: string;
   public commandsData: Array<PluginCommand>;
-  public onBeforeCharacterPost?: (message: Message, character: Character) => Promise<void>;
+  public onBeforeCharacterPost?: (
+    message: Message,
+    messageOptions: BaseMessageOptions,
+    character: Character,
+  ) => Promise<void>;
   public onAfterCharacterPost?: (message: Message, character: Character) => Promise<void>;
   public onBeforeShowCharacterProfile?: (
     messageOptions: BaseMessageOptions,
     character: Character,
     user: User,
-    server: Server
+    server: Server,
   ) => Promise<void>;
   public onAfterShowCharacterProfile?: (message: Message, character: Character, user: User) => Promise<void>;
   public constructor({
