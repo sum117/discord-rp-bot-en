@@ -29,8 +29,16 @@ export default class onCharacterMessage extends BaseEvent {
     const data = await CharacterService.getCurrentCharacterByUserId(message.author.id);
     if (!data) return;
 
+    const containsMentions = message.mentions.users.size > 0;
+    let mentionsString: string | undefined;
+    if (containsMentions) {
+      mentionsString = message.mentions.users.map((user) => user.toString()).join("|");
+      const mentionsRegex = new RegExp(`(${mentionsString})`, "g");
+      message.content = message.content.replaceAll(mentionsRegex, "");
+    }
     const messageOptions = await data.character.getCharacterPostFromMessage(message);
     if (messageOptions) {
+      messageOptions.content = mentionsString;
       bot.emit(RoleplayEvents.CharacterPost, message, messageOptions, data.character);
       const [minXp, maxXp] = MIN_MAX_EXP_PER_MESSAGE;
       const xpEarned = CommonService.randomIntFromInterval(minXp, maxXp);
@@ -46,7 +54,7 @@ export default class onCharacterMessage extends BaseEvent {
           translate("characterLevelUp", {
             level: updatedCharacter.level,
             characterName: updatedCharacter.name,
-          })
+          }),
         );
       }
       void CommonService.tryDeleteMessage(message);
