@@ -12,6 +12,15 @@ CREATE TABLE `categoriesToCharacters` (
 	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE TABLE `characterServerData` (
+	`characterId` integer NOT NULL,
+	`serverId` text NOT NULL,
+	`money` integer DEFAULT 0 NOT NULL,
+	PRIMARY KEY(`characterId`, `serverId`),
+	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`serverId`) REFERENCES `servers`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `characters` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`authorId` text NOT NULL,
@@ -64,6 +73,12 @@ CREATE TABLE `postsToCharacters` (
 	PRIMARY KEY(`characterId`, `postId`),
 	FOREIGN KEY (`postId`) REFERENCES `posts`(`messageId`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`characterId`) REFERENCES `characters`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `servers` (
+	`id` text PRIMARY KEY NOT NULL,
+	`moneyPluginEnabled` integer DEFAULT false NOT NULL,
+	`dndPluginEnabled` integer DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `users` (

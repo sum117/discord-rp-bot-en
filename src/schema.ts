@@ -85,6 +85,17 @@ export const characterServerData = sqliteTable(
   }),
 );
 
+export const characterServerDataRelations = relations(characterServerData, ({ one }) => ({
+  character: one(characters, {
+    fields: [characterServerData.characterId],
+    references: [characters.id],
+  }),
+  server: one(servers, {
+    fields: [characterServerData.serverId],
+    references: [servers.id],
+  }),
+}));
+
 export const usersToCharacters = sqliteTable(
   "usersToCharacters",
   {
