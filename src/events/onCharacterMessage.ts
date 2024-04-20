@@ -47,16 +47,21 @@ export default class onCharacterMessage extends BaseEvent {
       const hasPassedXpCooldown =
         DateTime.now().diff(DateTime.fromJSDate(data.character.lastExpGainAt ?? new Date()), "minutes").minutes >=
         XP_COOLDOWN_MINUTES;
-      if (isLevelUp(xpEarned) && hasPassedXpCooldown) {
-        const updatedCharacter = await data.character.levelUp();
-        const translate = data.author.getTranslateFunction();
-        await message.channel.send(
-          translate("characterLevelUp", {
-            level: updatedCharacter.level,
-            characterName: updatedCharacter.name,
-          }),
-        );
-      }
+        if (hasPassedXpCooldown) {
+          if (isLevelUp(xpEarned + data.character.exp)) {
+            const updatedCharacter = await data.character.levelUp();
+            const translate = data.author.getTranslateFunction();
+            await message.channel.send(
+              translate("characterLevelUp", {
+                level: updatedCharacter.level,
+                characterName: updatedCharacter.name,
+              }),
+            );
+          } else {
+            data.character.exp += xpEarned;
+            await CharacterService.updateCharacter(data.character);
+          }
+        }
       void CommonService.tryDeleteMessage(message);
     }
   }
