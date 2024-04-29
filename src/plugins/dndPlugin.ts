@@ -2,7 +2,7 @@ import Plugin from "@/models/Plugin";
 import UserService from "@/services/userService";
 import { RollemParserV1 } from "@rollem/language";
 
-const DICE_EMOJI = "<:rpg_dice:1230782818611757117>";
+const DICE_EMOJI = "<:1d20:1232390287926497280>";
 export const dndPlugin = new Plugin({
   name: "dnd-plugin",
   nameLocalizations: {
@@ -12,7 +12,7 @@ export const dndPlugin = new Plugin({
   descriptionLocalizations: {
     "pt-BR": "Um plugin para te ajudar com D&D.",
   },
-  author: "shartalter (Bot Owner)",
+  author: "sum117",
   commands: [],
   exampleParagraphsLocalizations: {
     "pt-BR": [""],

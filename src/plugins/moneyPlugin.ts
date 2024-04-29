@@ -197,7 +197,7 @@ export const moneyPlugin = new Plugin({
     ]);
     messageOptions.embeds = [builder];
   },
-  author: "shartalter (Bot Owner)",
+  author: "sum117",
   commands: [addMoneyCommand, removeMoneyCommand, giveMoneyCommand],
   description: "A plugin to manage money in your server. Add and remove money from characters. Set a daily reward.",
   descriptionLocalizations: {

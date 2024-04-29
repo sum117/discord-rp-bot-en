@@ -1,7 +1,7 @@
 rm -rf build
 bun run build
-cp -r drizzle build/
-cp sqlite.db build/
+# cp -r drizzle build/
+# cp sqlite.db build/
 cp package.json build/
 tar -czvf build.tar.gz build
 scp ./build.tar.gz character-vault:/home/sum117/projects/character-vault
