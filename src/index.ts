@@ -249,4 +249,11 @@ bot.on(
 const server = new Hono();
 server.route("/api", api);
 bot.login(Bun.env.BOT_TOKEN);
-export default server;
+export default {
+  port: 3000,
+  fetch: server.fetch,
+  tls: {
+    cert: Bun.file("certificate.pem"),
+    key: Bun.file("private.key"),
+  },
+};

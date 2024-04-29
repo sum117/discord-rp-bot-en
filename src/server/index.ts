@@ -14,10 +14,12 @@ api.get("/characters/:userId", async (context) => {
     return context.json({ ok: false, error: "Invalid user id" }, 400);
   }
   const userCharacters = await CharacterService.getCharacters({ userId });
+  const userCurrentCharacter = await CharacterService.getCurrentCharacterByUserId(userId);
 
   return context.json({
     ok: true,
     userCharacters,
+    userCurrentCharacter,
   });
 });
 
@@ -28,6 +30,16 @@ api.patch("/characters/set-active/:userId/:characterId", async (context) => {
   }
 
   const characterId = context.req.param("characterId");
+  if (characterId === "null") {
+    const user = await UserService.getOrCreateUser(userId);
+    user.currentCharacterId = null;
+    await UserService.updateUser(user);
+    return context.json({
+      ok: true,
+      message: "Active character removed",
+    });
+  }
+
   const characterIdParsed = parseInt(characterId);
   if (isNaN(characterIdParsed)) {
     return context.json({ ok: false, error: "Invalid character id" }, 400);
