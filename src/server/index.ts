@@ -36,6 +36,7 @@ api.patch("/characters/set-active/:userId/:characterId", async (context) => {
     await UserService.updateUser(user);
     return context.json({
       ok: true,
+      action: "remove",
       message: "Active character removed",
     });
   }
@@ -55,6 +56,7 @@ api.patch("/characters/set-active/:userId/:characterId", async (context) => {
   await UserService.updateUser(user);
   return context.json({
     ok: true,
+    action: "set",
     message: "Character with id " + character.id + " set as active",
   });
 });
