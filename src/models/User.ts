@@ -31,6 +31,10 @@ export class User implements UserType {
     return this;
   }
 
+  public ownsCharacter(characterId: number) {
+    return this.characters?.some((character) => character.id === characterId);
+  }
+
   public toJson(): UserType {
     return {
       id: this.id,

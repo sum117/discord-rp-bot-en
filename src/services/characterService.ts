@@ -5,7 +5,7 @@ import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
 import db from "../database";
 import { translateFactory } from "../i18n";
 import { Character, type CharacterType } from "../models/Character";
-import { characterServerData, characters, usersToCharacters } from "../schema";
+import { characterServerData, characters, users, usersToCharacters } from "../schema";
 import { ServerService } from "./serverService";
 import UserService from "./userService";
 
@@ -103,7 +103,17 @@ export default class CharacterService {
       return new Character(character);
     });
   }
+  public static async deleteCharacterFromUser({ characterId, userId }: { characterId: number; userId: string }) {
+    const [deletedCharacter] = await db
+      .delete(usersToCharacters)
+      .where(and(eq(usersToCharacters.characterId, characterId), eq(usersToCharacters.userId, userId)))
+      .returning();
 
+    if (!deletedCharacter) {
+      throw new Error(`Failed to delete character ${characterId} from user ${userId}.`);
+    }
+    return deletedCharacter;
+  }
   public static async updateCharacter(data: Character | CharacterType) {
     if (data instanceof Character) {
       data = data.toJson();
@@ -118,13 +128,20 @@ export default class CharacterService {
     return new Character(updatedCharacter);
   }
 
-  public static getCharacters({ name, userId, limit }: { name?: string; userId?: string; limit?: number } = {}) {
+  public static async getCharacters({ name, userId, limit }: { name?: string; userId?: string; limit?: number } = {}) {
     const filters: SQL[] = [];
     if (name) {
       filters.push(like(characters.name, `%${name}%`));
     }
     if (userId) {
-      filters.push(eq(characters.authorId, userId));
+      const userToCharactersRelation = await db.query.usersToCharacters.findMany({
+        where: (_table, { eq }) => eq(usersToCharacters.userId, userId),
+      });
+      if (userToCharactersRelation.length) {
+        filters.push(...userToCharactersRelation.map(({ characterId }) => eq(characters.id, characterId)));
+      } else {
+        return [];
+      }
     }
     return db.query.characters.findMany({
       limit,

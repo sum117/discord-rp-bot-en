@@ -1,4 +1,10 @@
 {
+  "characterDelete": "Deletar {{characterName}}",
+  "characterDeleteCanceled": "❌ Deleção de {{characterName}} cancelada.",
+  "characterDeleted": "✅ {{characterName}} deletado com sucesso.",
+  "confirm": "Confirmar",
+  "cancel": "Cancelar",
+  "confirmDelete": "⚠ Você tem certeza de que deseja deletar {{characterName}} com ID {{characterId}}? Esta ação não pode ser desfeita e eles se foram para sempre. Atualmente, seu nível é {{characterLevel}}.",
   "modalCharacterNameLabel": "Nome",
   "modalCharacterNamePlaceholder": "Digite o nome do personagem",
   "modalCharacterImageUrlLabel": "URL da imagem",
