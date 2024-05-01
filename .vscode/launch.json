@@ -9,8 +9,8 @@
       "type": "bun",
       "internalConsoleOptions": "neverOpen",
       "request": "launch",
-      "name": "Debug File",
-      "program": "${file}",
+      "name": "Development",
+      "program": "src/index.ts",
       "cwd": "${workspaceFolder}",
       "env": {
         "NODE_ENV": "development"
