@@ -1,4 +1,5 @@
 import {
+  ActivityType,
   ChatInputCommandInteraction,
   Client,
   Events,
@@ -150,6 +151,15 @@ bot.setUpEvents();
 
 bot.on(Events.ClientReady, async (readyClient) => {
   console.log(`Logged in as ${readyClient.user?.tag}`);
+  readyClient.user.setPresence({
+    activities: [
+      {
+        name: "Mango White Enclavera?",
+        type: ActivityType.Listening,
+        url: "https://youtu.be/p2n_E7wX5iU?si=Vl_GQMoDftr9NSdD",
+      },
+    ],
+  });
   await bot.setUpApplicationCommands();
   const servers = await Promise.all(readyClient.guilds.cache.map((guild) => ServerService.getOrCreateServer(guild.id)));
   for (const server of servers) {
