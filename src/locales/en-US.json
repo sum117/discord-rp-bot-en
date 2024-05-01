@@ -4,7 +4,7 @@
   "characterDeleted": "✅ Character with name {{characterName}} deleted successfully.",
   "confirm": "Confirm",
   "cancel": "Cancel",
-  "confirmDelete": "⚠ Are you sure you want to delete {{characterName}} with ID {{characterId}}? This action cannot be undone and they are gone forever. Currently, their level is {{characterLevel}}.",
+  "confirmDelete": "Are you sure you want to delete {{characterName}} with ID {{characterId}}? This action cannot be undone and they are gone forever. Currently, their level is {{characterLevel}}.",
   "modalCharacterNameLabel": "Character Name",
   "modalCharacterNamePlaceholder": "Enter character name",
   "modalCharacterImageUrlLabel": "Image URL",
