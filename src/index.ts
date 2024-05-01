@@ -48,7 +48,7 @@ export interface RoleplayEventPayloads {
     user: User,
     whenProfileSent: (profilePanel: Message) => Promise<void>,
     sendFn: (messageOptions: BaseMessageOptions) => Promise<Message>,
-    serverId: string
+    serverId: string,
   ];
   characterUpdate: [character: typeof characters.$inferSelect];
   itemCreate: [item: typeof items.$inferSelect];
@@ -78,7 +78,7 @@ export class RoleplayBot extends Client {
   public availablePlugins = [moneyPlugin, dndPlugin];
   public on<Event extends keyof RoleplayBotEventPayloads>(
     event: Event,
-    listener: (...args: RoleplayBotEventPayloads[Event]) => void
+    listener: (...args: RoleplayBotEventPayloads[Event]) => void,
   ): this;
   on(event: string | symbol, listener: (...args: unknown[]) => void): this {
     return super.on(event, listener);
@@ -173,7 +173,7 @@ bot.on(Events.InteractionCreate, async (interaction) => {
           await command.execute(interaction);
         } else {
           const plugin = bot.availablePlugins.find((plugin) =>
-            plugin.commandsData.some((command) => command.name === interaction.commandName)
+            plugin.commandsData.some((command) => command.name === interaction.commandName),
           );
           if (plugin) {
             const pluginCommandData = plugin.commandsData.find((command) => command.name === interaction.commandName);
@@ -211,7 +211,7 @@ bot.on(RoleplayEvents.CharacterPost, async (userMessage, messageOptions, charact
   const serverPlugins = server.getPlugins();
 
   await Promise.all(
-    serverPlugins.map((plugin) => plugin.onBeforeCharacterPost?.(userMessage, messageOptions, character))
+    serverPlugins.map((plugin) => plugin.onBeforeCharacterPost?.(userMessage, messageOptions, character)),
   ).catch((error) => {
     console.error(error);
   });
@@ -227,7 +227,7 @@ bot.on(RoleplayEvents.CharacterPost, async (userMessage, messageOptions, charact
   await Promise.all(serverPlugins.map((plugin) => plugin.onAfterCharacterPost?.(userMessage, character))).catch(
     (error) => {
       console.error(error);
-    }
+    },
   );
 });
 
@@ -237,18 +237,18 @@ bot.on(
     const server = await ServerService.getOrCreateServer(serverId);
     const serverPlugins = server?.getPlugins() ?? [];
     await Promise.all(
-      serverPlugins.map((plugin) => plugin.onBeforeShowCharacterProfile?.(messageOptions, character, user, server))
+      serverPlugins.map((plugin) => plugin.onBeforeShowCharacterProfile?.(messageOptions, character, user, server)),
     ).catch((error) => {
       console.error(error);
     });
     const profilePanel = await sendFn(messageOptions);
     await whenProfileSent(profilePanel);
     await Promise.all(
-      serverPlugins.map((plugin) => plugin.onAfterShowCharacterProfile?.(profilePanel, character, user))
+      serverPlugins.map((plugin) => plugin.onAfterShowCharacterProfile?.(profilePanel, character, user)),
     ).catch((error) => {
       console.error(error);
     });
-  }
+  },
 );
 const server = new Hono();
 server.route("/api", api);

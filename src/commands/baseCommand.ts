@@ -22,10 +22,10 @@ export abstract class BaseCommand {
     description: string;
     nameLocalizations?: LocalizationMap;
     descriptionLocalizations?: LocalizationMap;
-    
+
     autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
   };
-  public constructor({ name, description, options, autocomplete, ...rest}: BaseCommandData) {
+  public constructor({ name, description, options, autocomplete, ...rest }: BaseCommandData) {
     this.data = {
       name: name,
       nameLocalizations: rest.nameLocalizations,

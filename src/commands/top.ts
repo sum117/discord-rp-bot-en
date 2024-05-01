@@ -21,7 +21,7 @@ export default class TopCommand extends BaseCommand {
     await interaction.deferReply({ ephemeral: true });
     const characters = await CharacterService.getCharacters({ limit: 10 });
     const topCharacters = characters.map(
-      (character, index) => `${index + 1}. ${character.name} - ${character.level} | ${character.posts.length} posts`
+      (character, index) => `${index + 1}. ${character.name} - ${character.level} | ${character.posts.length} posts`,
     );
     const response = ["# ✨ Character Vault Top 10", "\n"];
     void interaction.editReply([...response, ...topCharacters].join("\n"));

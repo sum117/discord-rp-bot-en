@@ -58,12 +58,8 @@
           "name": "categoriesToCharacters_categoryId_categories_id_fk",
           "tableFrom": "categoriesToCharacters",
           "tableTo": "categories",
-          "columnsFrom": [
-            "categoryId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["categoryId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -71,22 +67,15 @@
           "name": "categoriesToCharacters_characterId_characters_id_fk",
           "tableFrom": "categoriesToCharacters",
           "tableTo": "characters",
-          "columnsFrom": [
-            "characterId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["characterId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "categoriesToCharacters_categoryId_characterId_pk": {
-          "columns": [
-            "categoryId",
-            "characterId"
-          ],
+          "columns": ["categoryId", "characterId"],
           "name": "categoriesToCharacters_categoryId_characterId_pk"
         }
       },
@@ -124,12 +113,8 @@
           "name": "characterServerData_characterId_characters_id_fk",
           "tableFrom": "characterServerData",
           "tableTo": "characters",
-          "columnsFrom": [
-            "characterId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["characterId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -137,22 +122,15 @@
           "name": "characterServerData_serverId_servers_id_fk",
           "tableFrom": "characterServerData",
           "tableTo": "servers",
-          "columnsFrom": [
-            "serverId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["serverId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "characterServerData_characterId_serverId_pk": {
-          "columns": [
-            "characterId",
-            "serverId"
-          ],
+          "columns": ["characterId", "serverId"],
           "name": "characterServerData_characterId_serverId_pk"
         }
       },
@@ -464,12 +442,8 @@
           "name": "postsToCharacters_postId_posts_messageId_fk",
           "tableFrom": "postsToCharacters",
           "tableTo": "posts",
-          "columnsFrom": [
-            "postId"
-          ],
-          "columnsTo": [
-            "messageId"
-          ],
+          "columnsFrom": ["postId"],
+          "columnsTo": ["messageId"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -477,22 +451,15 @@
           "name": "postsToCharacters_characterId_characters_id_fk",
           "tableFrom": "postsToCharacters",
           "tableTo": "characters",
-          "columnsFrom": [
-            "characterId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["characterId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "postsToCharacters_postId_characterId_pk": {
-          "columns": [
-            "characterId",
-            "postId"
-          ],
+          "columns": ["characterId", "postId"],
           "name": "postsToCharacters_postId_characterId_pk"
         }
       },
@@ -609,12 +576,8 @@
           "name": "usersToCharacters_userId_users_id_fk",
           "tableFrom": "usersToCharacters",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -622,22 +585,15 @@
           "name": "usersToCharacters_characterId_characters_id_fk",
           "tableFrom": "usersToCharacters",
           "tableTo": "characters",
-          "columnsFrom": [
-            "characterId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["characterId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "usersToCharacters_userId_characterId_pk": {
-          "columns": [
-            "characterId",
-            "userId"
-          ],
+          "columns": ["characterId", "userId"],
           "name": "usersToCharacters_userId_characterId_pk"
         }
       },

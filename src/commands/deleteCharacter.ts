@@ -9,7 +9,6 @@ import {
   type ChatInputCommandInteraction,
 } from "discord.js";
 import { BaseCommand } from "./baseCommand";
-import { char } from "drizzle-orm/mysql-core";
 import { Button } from "@/components/Button";
 import { Duration } from "luxon";
 import { BUTTON_CUSTOM_IDS } from "@/data/constants";
@@ -46,7 +45,7 @@ export default class DeleteCharacterCommand extends BaseCommand {
     const message = new EmbedBuilder()
       .setTitle(translate("characterDelete", { characterName: character.name }))
       .setDescription(
-        translate("confirmDelete", { characterName: character.name, characterId, characterLevel: character.level })
+        translate("confirmDelete", { characterName: character.name, characterId, characterLevel: character.level }),
       );
 
     const confirmButton = new Button({
