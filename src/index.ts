@@ -18,6 +18,7 @@ import { BaseCommand } from "./commands/baseCommand";
 import ChooseBotLanguageComand from "./commands/chooseBotLanguage";
 import ChooseCurrentCharacterCommand from "./commands/chooseCurrentCharacter";
 import CreateCharacterCommand from "./commands/createCharacter";
+import TopCommand from "./commands/top";
 import ManagePluginsCommand from "./commands/managePlugins";
 import RemoveCurrentCharacterCommand from "./commands/removeCurrentCharacter";
 import ShowCharacterProfileCommand from "./commands/showCharacterProfile";
@@ -93,6 +94,7 @@ export class RoleplayBot extends Client {
       ManagePluginsCommand,
       RemoveCurrentCharacterCommand,
       ShowCharacterProfileCommand,
+      TopCommand,
     ]) {
       if (Command.prototype instanceof BaseCommand) {
         const command = new Command();

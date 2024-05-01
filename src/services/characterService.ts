@@ -112,13 +112,13 @@ export default class CharacterService {
 
     if (!updatedCharacter) {
       throw new Error(
-        `Failed to update character in database for user ${data.authorId}.\nCharacter Data: ${JSON.stringify(data)}`,
+        `Failed to update character in database for user ${data.authorId}.\nCharacter Data: ${JSON.stringify(data)}`
       );
     }
     return new Character(updatedCharacter);
   }
 
-  public static getCharacters({ name, userId }: { name?: string; userId?: string } = {}) {
+  public static getCharacters({ name, userId, limit }: { name?: string; userId?: string; limit?: number } = {}) {
     const filters: SQL[] = [];
     if (name) {
       filters.push(like(characters.name, `%${name}%`));
@@ -127,7 +127,9 @@ export default class CharacterService {
       filters.push(eq(characters.authorId, userId));
     }
     return db.query.characters.findMany({
-      orderBy: ({ id }, { asc }) => asc(id),
+      limit,
+      with: { posts: true },
+      orderBy: ({ level }, { desc }) => desc(level),
       where: (_table, { and }) => and(...filters),
     });
   }
