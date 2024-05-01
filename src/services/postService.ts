@@ -16,10 +16,10 @@ export default class PostService {
         return;
       }
 
-      for (const character of postData.characters) {
-        void transaction.insert(postsToCharacters).values({ characterId: character.id, postId: post.messageId });
+      for await (const character of postData.characters) {
+        await transaction.insert(postsToCharacters).values({ characterId: character.id, postId: post.messageId });
         character.lastPostAt = DateTime.now().toJSDate();
-        void CharacterService.updateCharacter(character);
+        await CharacterService.updateCharacter(character);
       }
 
       return new Post({ ...post, characters: postData.characters });

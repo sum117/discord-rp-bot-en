@@ -162,14 +162,14 @@ bot.on(Events.ClientReady, async (readyClient) => {
       },
     ],
   });
-  await bot.setUpApplicationCommands();
+  bot.setUpApplicationCommands();
   const servers = await Promise.all(readyClient.guilds.cache.map((guild) => ServerService.getOrCreateServer(guild.id)));
-  for (const server of servers) {
+  for await (const server of servers) {
     const guild = readyClient.guilds.cache.get(server.id);
     if (guild) {
-      for (const plugin of server.getPlugins()) {
-        for (const commands of plugin.getCommands()) {
-          void guild.commands.create(commands);
+      for await (const plugin of server.getPlugins()) {
+        for await (const commands of plugin.getCommands()) {
+          await guild.commands.create(commands);
         }
       }
     }

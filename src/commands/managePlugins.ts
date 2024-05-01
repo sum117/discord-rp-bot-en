@@ -98,18 +98,18 @@ export default class ManagePlugin extends BaseCommand {
               if (alreadyHasPlugin) {
                 await ServerService.updateServer(server.removePlugin(botPlugin.name));
                 await buttonInteraction.editReply({ content: translate("pluginRemoved") });
-                for (const removedPluginCommandData of botPlugin.getCommands()) {
+                for await (const removedPluginCommandData of botPlugin.getCommands()) {
                   const toRemove = interaction.guild.commands.cache.find(
                     (command) => command.name === removedPluginCommandData.name,
                   );
                   if (toRemove) {
-                    void toRemove.delete();
+                    await toRemove.delete();
                   }
                 }
               } else {
                 await ServerService.updateServer(server.addPlugin(botPlugin.name));
-                for (const addedPluginCommandData of botPlugin.getCommands()) {
-                  void interaction.guild.commands.create(addedPluginCommandData);
+                for await (const addedPluginCommandData of botPlugin.getCommands()) {
+                  await interaction.guild.commands.create(addedPluginCommandData);
                 }
                 await buttonInteraction.editReply({
                   content: translate("pluginAdded", {
