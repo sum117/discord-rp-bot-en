@@ -37,6 +37,7 @@ import { ServerService } from "./services/serverService";
 import { dndPlugin } from "./plugins/dndPlugin";
 import { Hono } from "hono";
 import api from "./server";
+import DeleteCharacterCommand from "./commands/deleteCharacter";
 export interface RoleplayEventPayloads {
   characterCreate: [character: typeof characters.$inferSelect];
   characterDelete: [character: typeof characters.$inferSelect];
@@ -94,6 +95,7 @@ export class RoleplayBot extends Client {
       ManagePluginsCommand,
       RemoveCurrentCharacterCommand,
       ShowCharacterProfileCommand,
+      DeleteCharacterCommand,
       TopCommand,
     ]) {
       if (Command.prototype instanceof BaseCommand) {
@@ -251,11 +253,15 @@ bot.on(
 const server = new Hono();
 server.route("/api", api);
 bot.login(Bun.env.BOT_TOKEN);
+
+const isDevelopment = Bun.env.NODE_ENV === "development";
+const getCertFiles = () => ({
+  cert: Bun.file("certificate.pem"),
+  key: Bun.file("private.key"),
+});
+const tls = isDevelopment ? undefined : getCertFiles();
 export default {
   port: 3000,
   fetch: server.fetch,
-  tls: {
-    cert: Bun.file("certificate.pem"),
-    key: Bun.file("private.key"),
-  },
+  tls,
 };

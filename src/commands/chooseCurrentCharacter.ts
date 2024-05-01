@@ -31,6 +31,7 @@ export default class ChooseCurrentCharacter extends BaseCommand {
       await interaction.editReply({
         content: translate("characterNotFound"),
       });
+      return;
     }
     const character = await CharacterService.getCharacterById(characterId);
     if (character) {

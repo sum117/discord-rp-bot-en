@@ -10,6 +10,8 @@ export const BUTTON_CUSTOM_IDS = {
   appearance: "appearance",
   backstory: "backstory",
   personality: "personality",
+  confirmDelete: "confirm-delete",
+  cancelDelete: "cancel-delete",
 } as const;
 export const SELECT_CUSTOM_IDS = {
   editCharacter: "editCharacter",
