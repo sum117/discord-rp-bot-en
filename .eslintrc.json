@@ -4,6 +4,7 @@
     "parserOptions": {
       "project": ["./tsconfig.json"]
     },
+    "ignorePatterns": ["build/", "node_modules/"],
     "plugins": [
       "@typescript-eslint",
       "simple-import-sort",
