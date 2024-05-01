@@ -13,6 +13,7 @@
   "modalCharacterAppearanceLabel": "Aparência",
   "modalCharacterAppearancePlaceholder": "Digite a aparência do personagem",
   "modalCharacterBackstoryPlaceholder": "Digite a história do personagem",
+  "moneyGiven": "✅ {{hostCharacterName}} deu {{amount}} para {{targetCharacterName}}.",
   "modalCharacterPersonalityLabel": "Personalidade",
   "modalCharacterPersonalityPlaceholder": "Digite a personalidade do personagem",
   "createCharacterCommandName": "criar-personagem",
