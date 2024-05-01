@@ -1,0 +1,47 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  transpile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1.2.1
+        # Sadly needed for better-sqlite3 install script
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.0.2
+      - name: Install dependencies
+        run: bun install
+      - name: Build Bundle
+        # From package.json
+        run: bun run build
+      - name: Compress Relevant Files
+        run: |
+          tar -czf build.tar.gz build/ package.json bun.lockb
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: build
+          path: build.tar.gz
+  deploy:
+    runs-on: ubuntu-latest
+    needs: transpile
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: build
+      - name: List directory contents
+        run: ls -R
+
+      - name: Send to Server
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > key.pem
+          sudo chmod 600 key.pem
+          scp -i key.pem -o StrictHostKeyChecking=no ./build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/projects/character-vault/build.tar.gz
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -t 'cd ~/projects/character-vault && tar -xzvf build.tar.gz && cp -rf build/* . && rm -rf build.tar.gz && rm -rf build && sudo systemctl restart character-vault.service'
