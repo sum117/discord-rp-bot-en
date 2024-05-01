@@ -1,5 +1,5 @@
 import { AutocompleteInteraction, TextInputStyle } from "discord.js";
-import { SQL, and, eq, like } from "drizzle-orm";
+import { SQL, and, eq, inArray, like } from "drizzle-orm";
 import Modal, { TextInputLength } from "../components/Modal";
 import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
 import db from "../database";
@@ -122,7 +122,7 @@ export default class CharacterService {
 
     if (!updatedCharacter) {
       throw new Error(
-        `Failed to update character in database for user ${data.authorId}.\nCharacter Data: ${JSON.stringify(data)}`
+        `Failed to update character in database for user ${data.authorId}.\nCharacter Data: ${JSON.stringify(data)}`,
       );
     }
     return new Character(updatedCharacter);
@@ -138,7 +138,12 @@ export default class CharacterService {
         where: (_table, { eq }) => eq(usersToCharacters.userId, userId),
       });
       if (userToCharactersRelation.length) {
-        filters.push(...userToCharactersRelation.map(({ characterId }) => eq(characters.id, characterId)));
+        filters.push(
+          inArray(
+            characters.id,
+            userToCharactersRelation.map((relation) => relation.characterId),
+          ),
+        );
       } else {
         return [];
       }
