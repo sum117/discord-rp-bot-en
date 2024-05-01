@@ -1,17 +1,18 @@
 import {
   ActionRowBuilder,
-  AttachmentBuilder,
-  ButtonBuilder,
-  ButtonInteraction,
-  Message,
-  StringSelectMenuBuilder,
-  TextInputStyle,
-  resolveColor,
   type APIEmbed,
+  AttachmentBuilder,
   type BaseMessageOptions,
+  type ButtonBuilder,
+  type ButtonInteraction,
   type HexColorString,
+  type Message,
+  resolveColor,
+  type StringSelectMenuBuilder,
+  TextInputStyle,
 } from "discord.js";
 import { Duration } from "luxon";
+
 import { Button } from "../components/Button";
 import Modal, { TextInputLength } from "../components/Modal";
 import { Select } from "../components/Select";
@@ -26,7 +27,7 @@ import {
   SELECT_CUSTOM_IDS,
 } from "../data/constants";
 import translate from "../i18n";
-import { characters } from "../schema";
+import type { characters } from "../schema";
 import CharacterService from "../services/characterService";
 import CommonService from "../services/commonService";
 
@@ -148,13 +149,13 @@ export class Character implements CharacterType {
     isEditing = true,
     isCharOwner = false,
   }: {
-    language: "en-US" | "pt-BR";
-    isEditing: boolean;
     isCharOwner: boolean;
+    isEditing: boolean;
+    language: "en-US" | "pt-BR";
   }) {
     type CharacterProfileMessageOptions = BaseMessageOptions & {
-      components?: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
       buttons?: Button[];
+      components?: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
       selectMenu?: Select;
     };
 
@@ -196,7 +197,7 @@ export class Character implements CharacterType {
     return messageOptions;
   }
 
-  public async getCharacterPostFromMessage(message: Message): Promise<BaseMessageOptions> {
+  public getCharacterPostFromMessage(message: Message): BaseMessageOptions {
     const data: BaseMessageOptions = {};
     const embed = this.getBaseEmbed();
     embed.author = {
@@ -279,9 +280,9 @@ export class Character implements CharacterType {
     isCharOwner = false,
     isEditing = true,
   }: {
-    language: "en-US" | "pt-BR";
     isCharOwner: boolean;
     isEditing: boolean;
+    language: "en-US" | "pt-BR";
   }) {
     return new Select({
       customId: SELECT_CUSTOM_IDS.editCharacter,

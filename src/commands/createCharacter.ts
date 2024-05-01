@@ -1,6 +1,7 @@
 import { type CommandInteraction } from "discord.js";
 import { Duration } from "luxon";
-import { RoleplayEvents, bot } from "..";
+
+import { bot,RoleplayEvents } from "..";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
 import CharacterService from "../services/characterService";

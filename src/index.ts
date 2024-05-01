@@ -1,15 +1,17 @@
 import {
   ActivityType,
-  ChatInputCommandInteraction,
+  type BaseMessageOptions,
+  type ChatInputCommandInteraction,
   Client,
+  type ClientEvents,
+  DiscordAPIError,
   Events,
   GatewayIntentBits,
   InteractionType,
-  Message,
+  type Message,
   Partials,
-  type BaseMessageOptions,
-  type ClientEvents,
 } from "discord.js";
+import { Hono } from "hono";
 
 /**
  * Currently, bun build doesn't support import * from index files, so I have to import the commands one by one to make sure they are included in the build.
@@ -19,10 +21,11 @@ import { BaseCommand } from "./commands/baseCommand";
 import ChooseBotLanguageComand from "./commands/chooseBotLanguage";
 import ChooseCurrentCharacterCommand from "./commands/chooseCurrentCharacter";
 import CreateCharacterCommand from "./commands/createCharacter";
-import TopCommand from "./commands/top";
+import DeleteCharacterCommand from "./commands/deleteCharacter";
 import ManagePluginsCommand from "./commands/managePlugins";
 import RemoveCurrentCharacterCommand from "./commands/removeCurrentCharacter";
 import ShowCharacterProfileCommand from "./commands/showCharacterProfile";
+import TopCommand from "./commands/top";
 import { BaseEvent } from "./events/baseEvent";
 import onCharacterMessageEvent from "./events/onCharacterMessage";
 import onCharacterMessageReactioEvent from "./events/onCharacterMessageReaction";
@@ -31,14 +34,13 @@ import onCharacterMessageReactioEvent from "./events/onCharacterMessageReaction"
  */
 import type { Character } from "./models/Character";
 import type { User } from "./models/User";
+import { dndPlugin } from "./plugins/dndPlugin";
 import { moneyPlugin } from "./plugins/moneyPlugin";
 import type { characters, items } from "./schema";
+import api from "./server";
 import PostService from "./services/postService";
 import { ServerService } from "./services/serverService";
-import { dndPlugin } from "./plugins/dndPlugin";
-import { Hono } from "hono";
-import api from "./server";
-import DeleteCharacterCommand from "./commands/deleteCharacter";
+
 export interface RoleplayEventPayloads {
   characterCreate: [character: typeof characters.$inferSelect];
   characterDelete: [character: typeof characters.$inferSelect];
@@ -47,7 +49,7 @@ export interface RoleplayEventPayloads {
     messageOptions: BaseMessageOptions,
     character: Character,
     user: User,
-    whenProfileSent: (profilePanel: Message) => Promise<void>,
+    whenProfileSent: (profilePanel: Message) => Promise<void> | void,
     sendFn: (messageOptions: BaseMessageOptions) => Promise<Message>,
     serverId: string,
   ];
@@ -88,7 +90,7 @@ export class RoleplayBot extends Client {
   emit(event: string | symbol, ...args: unknown[]): boolean {
     return super.emit(event, ...args);
   }
-  public async setUpApplicationCommands() {
+  public setUpApplicationCommands() {
     for (const Command of [
       ChooseBotLanguageComand,
       ChooseCurrentCharacterCommand,
@@ -102,7 +104,7 @@ export class RoleplayBot extends Client {
       if (Command.prototype instanceof BaseCommand) {
         const command = new Command();
         this.commands.set(command.data.name, command);
-        await this.application?.commands.create(command.data);
+        void this.application?.commands.create(command.data);
         console.log(`✅ Registered command: ${command.data.name}`);
       }
     }
@@ -167,7 +169,7 @@ bot.on(Events.ClientReady, async (readyClient) => {
     if (guild) {
       for (const plugin of server.getPlugins()) {
         for (const commands of plugin.getCommands()) {
-          await guild.commands.create(commands);
+          void guild.commands.create(commands);
         }
       }
     }
@@ -207,15 +209,17 @@ bot.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-bot.on(RoleplayEvents.CharacterCreate, (character) => {});
-bot.on(RoleplayEvents.CharacterDelete, (character) => {});
-bot.on(RoleplayEvents.CharacterUpdate, (character) => {});
-bot.on(RoleplayEvents.ItemCreate, (item) => {});
-bot.on(RoleplayEvents.ItemDelete, (item) => {});
-bot.on(RoleplayEvents.ItemUpdate, (item) => {});
+// bot.on(RoleplayEvents.CharacterCreate, (character) => {});
+// bot.on(RoleplayEvents.CharacterDelete, (character) => {});
+// bot.on(RoleplayEvents.CharacterUpdate, (character) => {});
+// bot.on(RoleplayEvents.ItemCreate, (item) => {});
+// bot.on(RoleplayEvents.ItemDelete, (item) => {});
+// bot.on(RoleplayEvents.ItemUpdate, (item) => {});
 
 bot.on(RoleplayEvents.CharacterPost, async (userMessage, messageOptions, character) => {
-  if (!userMessage.inGuild()) return;
+  if (!userMessage.inGuild()) {
+    return;
+  }
 
   const server = await ServerService.getOrCreateServer(userMessage.guild.id);
   const serverPlugins = server.getPlugins();
@@ -260,6 +264,15 @@ bot.on(
     });
   },
 );
+
+bot.on(Events.Error, (error) => {
+  if (error instanceof DiscordAPIError) {
+    console.error(
+      `Discord API Error (${error.code}): ${error.cause}\nMessage: ${error.message}\nMethod: ${error.method}\n$Body: ${error.requestBody}\nStack:${error.stack}`,
+    );
+  }
+});
+
 const server = new Hono();
 server.route("/api", api);
 bot.login(Bun.env.BOT_TOKEN);

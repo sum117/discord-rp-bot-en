@@ -1,19 +1,20 @@
-import { StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
+import type { StringSelectMenuInteraction } from "discord.js";
+import { StringSelectMenuBuilder } from "discord.js";
 
 type SelectMenuOption = {
-  label: string;
-  value: string;
+  default?: boolean;
   description?: string;
   emoji?: string;
-  default?: boolean;
+  label: string;
+  value: string;
 };
 
 type SelectMenuData = {
   customId: string;
-  placeholder?: string;
   disabled?: boolean;
-  options: SelectMenuOption[];
   onSelection: (interaction: StringSelectMenuInteraction) => Promise<void>;
+  options: SelectMenuOption[];
+  placeholder?: string;
 };
 export class Select {
   public options: SelectMenuOption[];

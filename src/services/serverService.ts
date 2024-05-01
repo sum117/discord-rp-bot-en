@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+
 import db from "../database";
 import Server from "../models/Server";
 import { characterServerData, servers } from "../schema";
@@ -36,7 +37,7 @@ export class ServerService {
     return serverData;
   }
 
-  public static async updateServer(server: Server) {
-    return await db.update(servers).set(server).where(eq(servers.id, server.id)).returning();
+  public static updateServer(server: Server) {
+    return db.update(servers).set(server).where(eq(servers.id, server.id)).returning();
   }
 }

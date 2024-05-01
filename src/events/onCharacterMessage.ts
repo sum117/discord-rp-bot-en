@@ -1,6 +1,7 @@
 import { Events, type Message } from "discord.js";
 import { DateTime } from "luxon";
-import { EditingState, RoleplayEvents, bot } from "..";
+
+import { bot,EditingState, RoleplayEvents } from "..";
 import { MIN_MAX_EXP_PER_MESSAGE, XP_COOLDOWN_MINUTES } from "../data/constants";
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
@@ -21,13 +22,13 @@ export default class onCharacterMessage extends BaseEvent {
     });
   }
   async execute(message: Message<boolean>) {
-    if (message.author.bot || bot.isEditing.get(message.author.id) === EditingState.Editing) return;
+    if (message.author.bot || bot.isEditing.get(message.author.id) === EditingState.Editing) {return;}
 
     const outOfTopicPrefixRegex = /^(\/|\\|\(|\))/m;
-    if (message.content.match(outOfTopicPrefixRegex)) return;
+    if (message.content.match(outOfTopicPrefixRegex)) {return;}
 
     const data = await CharacterService.getCurrentCharacterByUserId(message.author.id);
-    if (!data) return;
+    if (!data) {return;}
 
     const containsMentions = message.mentions.users.size > 0;
     let mentionsString: string | undefined;

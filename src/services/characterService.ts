@@ -1,11 +1,14 @@
-import { AutocompleteInteraction, TextInputStyle } from "discord.js";
-import { SQL, and, eq, inArray, like } from "drizzle-orm";
+import type { AutocompleteInteraction } from "discord.js";
+import { TextInputStyle } from "discord.js";
+import type { SQL } from "drizzle-orm";
+import { and, eq, inArray, like } from "drizzle-orm";
+
 import Modal, { TextInputLength } from "../components/Modal";
 import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
 import db from "../database";
 import { translateFactory } from "../i18n";
 import { Character, type CharacterType } from "../models/Character";
-import { characterServerData, characters, users, usersToCharacters } from "../schema";
+import { characters, characterServerData, usersToCharacters } from "../schema";
 import { ServerService } from "./serverService";
 import UserService from "./userService";
 
@@ -92,8 +95,8 @@ export default class CharacterService {
     return new Character(character);
   }
 
-  public static async createCharacter(characterData: typeof characters.$inferInsert) {
-    return await db.transaction(async (transaction) => {
+  public static createCharacter(characterData: typeof characters.$inferInsert) {
+    return db.transaction(async (transaction) => {
       const [character] = await transaction.insert(characters).values(characterData).returning();
       if (!character) {
         transaction.rollback();
@@ -128,7 +131,7 @@ export default class CharacterService {
     return new Character(updatedCharacter);
   }
 
-  public static async getCharacters({ name, userId, limit }: { name?: string; userId?: string; limit?: number } = {}) {
+  public static async getCharacters({ name, userId, limit }: { limit?: number; name?: string; userId?: string } = {}) {
     const filters: SQL[] = [];
     if (name) {
       filters.push(like(characters.name, `%${name}%`));
@@ -161,12 +164,12 @@ export default class CharacterService {
     amount,
     serverId,
   }: {
-    characterId: number;
     amount: number;
+    characterId: number;
     serverId: string;
   }) {
     const serverData = await ServerService.getOrCreateCharacterServerData(characterId, serverId);
-    return await db
+    return db
       .update(characterServerData)
       .set({ money: serverData.money + amount })
       .where(and(eq(characterServerData.characterId, characterId), eq(characterServerData.serverId, serverId)));
@@ -179,11 +182,11 @@ export default class CharacterService {
     hasPermission,
     amount,
   }: {
-    hostCharacterId: number;
-    hasPermission: boolean;
-    targetCharacterId: number;
-    serverId: string;
     amount: number;
+    hasPermission: boolean;
+    hostCharacterId: number;
+    serverId: string;
+    targetCharacterId: number;
   }) {
     if (hostCharacterId === targetCharacterId || !hasPermission) {
       return;
@@ -214,15 +217,15 @@ export default class CharacterService {
     amount,
     serverId,
   }: {
-    characterId: number;
     amount: number;
+    characterId: number;
     serverId: string;
   }) {
     const serverData = await ServerService.getOrCreateCharacterServerData(characterId, serverId);
     if (serverData.money < amount) {
       serverData.money = 0;
     }
-    return await db
+    return db
       .update(characterServerData)
       .set({ money: serverData.money - amount })
       .where(and(eq(characterServerData.characterId, characterId), eq(characterServerData.serverId, serverId)));

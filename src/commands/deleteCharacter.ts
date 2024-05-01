@@ -1,17 +1,19 @@
+import {
+  ActionRowBuilder,
+  type ButtonBuilder,
+  type ChatInputCommandInteraction,
+  ComponentType,
+  EmbedBuilder,
+} from "discord.js";
+import { Duration } from "luxon";
+
+import { Button } from "@/components/Button";
+import { BUTTON_CUSTOM_IDS } from "@/data/constants";
 import { characterAutoComplete } from "@/data/shared";
 import CharacterService from "@/services/characterService";
 import UserService from "@/services/userService";
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ComponentType,
-  EmbedBuilder,
-  type ChatInputCommandInteraction,
-} from "discord.js";
+
 import { BaseCommand } from "./baseCommand";
-import { Button } from "@/components/Button";
-import { Duration } from "luxon";
-import { BUTTON_CUSTOM_IDS } from "@/data/constants";
 
 export default class DeleteCharacterCommand extends BaseCommand {
   public constructor() {
@@ -64,7 +66,7 @@ export default class DeleteCharacterCommand extends BaseCommand {
     const cancelButton = new Button({
       customId: BUTTON_CUSTOM_IDS.cancelDelete,
       label: translate("cancel"),
-      onClick: async () => {
+      onClick: () => {
         void interaction.editReply({ content: translate("characterDeleteCanceled"), components: [], embeds: [] });
       },
     });

@@ -1,4 +1,5 @@
 import { dndPlugin } from "@/plugins/dndPlugin";
+
 import { moneyPlugin } from "../plugins/moneyPlugin";
 import type { ServerType } from "../services/serverService";
 

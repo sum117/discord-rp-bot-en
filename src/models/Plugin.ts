@@ -1,4 +1,5 @@
 import type { BaseMessageOptions, ChatInputCommandInteraction, Message } from "discord.js";
+
 import type { BaseCommandData } from "../commands/baseCommand";
 import type { Character } from "./Character";
 import type Server from "./Server";
@@ -9,23 +10,23 @@ export type PluginCommand = BaseCommandData & {
 };
 
 type PluginData = {
-  name: string;
-  nameLocalizations: Record<"pt-BR", string>;
+  author: string;
+  commands: Array<PluginCommand>;
   description: string;
   descriptionLocalizations: Record<string, string>;
   exampleParagraphs: Array<string>;
   exampleParagraphsLocalizations: Record<string, Array<string>>;
-  author: string;
-  commands: Array<PluginCommand>;
-  onBeforeCharacterPost?: (message: Message, messageOptions: BaseMessageOptions, character: Character) => Promise<void>;
+  name: string;
+  nameLocalizations: Record<"pt-BR", string>;
   onAfterCharacterPost?: (message: Message, character: Character) => Promise<void>;
+  onAfterShowCharacterProfile?: (message: Message, character: Character, user: User) => Promise<void>;
+  onBeforeCharacterPost?: (message: Message, messageOptions: BaseMessageOptions, character: Character) => Promise<void>;
   onBeforeShowCharacterProfile?: (
     messageOptions: BaseMessageOptions,
     character: Character,
     user: User,
     server: Server,
   ) => Promise<void>;
-  onAfterShowCharacterProfile?: (message: Message, character: Character, user: User) => Promise<void>;
 };
 
 export default class Plugin {

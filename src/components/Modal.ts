@@ -1,9 +1,9 @@
 import {
-  ComponentType,
-  ModalSubmitInteraction,
-  TextInputStyle,
   type ActionRowData,
+  ComponentType,
   type ModalActionRowComponentData,
+  type ModalSubmitInteraction,
+  type TextInputStyle,
 } from "discord.js";
 
 export enum TextInputLength {
@@ -14,21 +14,21 @@ export enum TextInputLength {
 
 export interface TextInputData {
   customId: string;
-  type: ComponentType.TextInput;
-  style: TextInputStyle;
   label: string;
-  placeholder: string;
   maxLength: TextInputLength;
   minLength?: number;
+  placeholder: string;
   required?: boolean;
+  style: TextInputStyle;
+  type: ComponentType.TextInput;
   value?: string;
 }
 
 export const DISCORD_MODAL_MAX_TEXT_INPUTS = 5;
 
 export default class Modal<T extends Record<string, string | number>> {
-  public title: string = "";
-  public customId: string = "";
+  public title = "";
+  public customId = "";
   public components: ActionRowData<ModalActionRowComponentData>[] = [];
   private fields: Record<string, string> = {};
 
@@ -60,14 +60,11 @@ export default class Modal<T extends Record<string, string | number>> {
   }
 
   public getUserResponse(interaction: ModalSubmitInteraction) {
-    return Object.keys(this.fields).reduce(
-      (accumulator, key) => {
-        return {
-          ...accumulator,
-          [key]: interaction.fields.getTextInputValue(key),
-        };
-      },
-      <T>{},
-    );
+    return Object.keys(this.fields).reduce((accumulator, key) => {
+      return {
+        ...accumulator,
+        [key]: interaction.fields.getTextInputValue(key),
+      };
+    }, <T>{});
   }
 }

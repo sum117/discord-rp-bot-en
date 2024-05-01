@@ -1,6 +1,8 @@
-import type { CommandInteraction, CacheType } from "discord.js";
-import { BaseCommand } from "./baseCommand";
+import type { CommandInteraction } from "discord.js";
+
 import CharacterService from "@/services/characterService";
+
+import { BaseCommand } from "./baseCommand";
 
 export default class TopCommand extends BaseCommand {
   public constructor() {

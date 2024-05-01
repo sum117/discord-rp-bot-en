@@ -1,29 +1,33 @@
 {
   "name": "character_vault_discord",
   "module": "index.ts",
-  "type": "module",
+  "dependencies": {
+    "@rollem/language": "2.7.2",
+    "discord.js": "^14.14.1",
+    "drizzle-orm": "^0.30.10",
+    "hono": "^4.2.9",
+    "i18next": "^23.11.3",
+    "luxon": "^3.4.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@total-typescript/ts-reset": "^0.5.1",
+    "@types/bun": "latest",
+    "@types/luxon": "^3.4.2",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "better-sqlite3": "^9.6.0",
+    "drizzle-kit": "^0.20.17",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-simple-import-sort": "^12.1.0"
+  },
   "scripts": {
     "generate": "drizzle-kit generate:sqlite",
     "studio": "drizzle-kit studio",
     "dev": "bun src/index.ts --watch",
-    "build": "bun build --target=bun --outfile=build/index.js src/index.ts"
+    "build": "bun build --target=bun --outfile=build/index.js src/index.ts",
+    "lint": "eslint src/**/*.ts --fix --no-ignore --config .eslintrc.json"
   },
-  "devDependencies": {
-    "@total-typescript/ts-reset": "^0.5.1",
-    "@types/bun": "latest",
-    "@types/luxon": "^3.4.2",
-    "better-sqlite3": "^9.4.3",
-    "drizzle-kit": "^0.20.17"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@rollem/language": "2.7.2",
-    "discord.js": "^14.14.1",
-    "drizzle-orm": "^0.30.4",
-    "hono": "^4.2.8",
-    "i18next": "^23.10.1",
-    "luxon": "^3.4.4"
-  }
+  "type": "module"
 }

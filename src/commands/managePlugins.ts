@@ -1,14 +1,15 @@
 import {
   ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  ComponentType,
-  resolveColor,
   type APIEmbed,
+  type ButtonBuilder,
+  ButtonStyle,
   type CommandInteraction,
+  ComponentType,
   type HexColorString,
+  resolveColor,
 } from "discord.js";
 import { Duration } from "luxon";
+
 import { bot } from "..";
 import { Button } from "../components/Button";
 import type Plugin from "../models/Plugin";
@@ -29,7 +30,9 @@ export default class ManagePlugin extends BaseCommand {
   }
 
   async execute(interaction: CommandInteraction) {
-    if (!interaction.inCachedGuild()) return;
+    if (!interaction.inCachedGuild()) {
+      return;
+    }
     const user = await UserService.getOrCreateUser(interaction.user.id);
     const translate = user.getTranslateFunction();
     if (interaction.user.id !== interaction.guild.ownerId) {
@@ -87,7 +90,9 @@ export default class ManagePlugin extends BaseCommand {
             ? translate("removePlugin", { pluginName: botPlugin.name })
             : translate("addPlugin", { pluginName: botPlugin.name }),
           async onClick(buttonInteraction) {
-            if (!buttonInteraction.inCachedGuild()) return;
+            if (!buttonInteraction.inCachedGuild()) {
+              return;
+            }
             await buttonInteraction.deferUpdate();
             if (buttonInteraction.customId === botPlugin.name) {
               if (alreadyHasPlugin) {
@@ -97,12 +102,14 @@ export default class ManagePlugin extends BaseCommand {
                   const toRemove = interaction.guild.commands.cache.find(
                     (command) => command.name === removedPluginCommandData.name,
                   );
-                  if (toRemove) await toRemove.delete();
+                  if (toRemove) {
+                    void toRemove.delete();
+                  }
                 }
               } else {
                 await ServerService.updateServer(server.addPlugin(botPlugin.name));
                 for (const addedPluginCommandData of botPlugin.getCommands()) {
-                  await interaction.guild.commands.create(addedPluginCommandData);
+                  void interaction.guild.commands.create(addedPluginCommandData);
                 }
                 await buttonInteraction.editReply({
                   content: translate("pluginAdded", {

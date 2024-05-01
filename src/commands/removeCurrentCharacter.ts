@@ -1,4 +1,5 @@
 import type { ChatInputCommandInteraction } from "discord.js";
+
 import UserService from "../services/userService";
 import { BaseCommand } from "./baseCommand";
 

@@ -1,5 +1,5 @@
 import { translateFactory } from "../i18n";
-import { users } from "../schema";
+import type { users } from "../schema";
 import type { Character } from "./Character";
 
 export type UserType = typeof users.$inferSelect;

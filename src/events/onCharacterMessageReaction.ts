@@ -1,6 +1,8 @@
-import { Events, MessageReaction } from "discord.js";
+import type { MessageReaction } from "discord.js";
+import { Events } from "discord.js";
 import { Duration } from "luxon";
-import { EditingState, bot } from "..";
+
+import { bot,EditingState } from "..";
 import CommonService from "../services/commonService";
 import PostService from "../services/postService";
 import UserService from "../services/userService";
@@ -23,20 +25,20 @@ export default class onCharacterMessageReaction extends BaseEvent {
   }
 
   async execute(messageReaction: MessageReaction) {
-    if (!this.POSSIBLE_REACTIONS.includes(messageReaction.emoji.name ?? "")) return;
+    if (!this.POSSIBLE_REACTIONS.includes(messageReaction.emoji.name ?? "")) {return;}
 
     const post = await PostService.getPostByMessageId(messageReaction.message.id);
-    if (!post) return;
+    if (!post) {return;}
 
     const userWhoReacted = messageReaction.users.cache.last();
-    if (post.authorId !== userWhoReacted?.id) return;
+    if (post.authorId !== userWhoReacted?.id) {return;}
 
     if (messageReaction.emoji.name === "✏️") {
       const messageToEdit = await messageReaction.message.channel.messages.fetch(post.messageId).catch(() => {
         console.error("Message with ID ", post.messageId, " not found");
         return null;
       });
-      if (!messageToEdit) return;
+      if (!messageToEdit) {return;}
 
       const apiEmbed = messageToEdit.embeds.at(0);
       if (apiEmbed) {
@@ -57,7 +59,7 @@ export default class onCharacterMessageReaction extends BaseEvent {
         messageCollector.on("collect", async (collectedMessage) => {
           try {
             const character = post.characters.at(0);
-            if (!character) return;
+            if (!character) {return;}
             await messageToEdit.edit(await character.getCharacterPostFromMessage(collectedMessage));
             await PostService.updatePostContentByMessageId(post.messageId, collectedMessage.content);
             void CommonService.tryDeleteMessage(collectedMessage);

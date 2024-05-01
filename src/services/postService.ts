@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { DateTime } from "luxon";
+
 import db from "../database";
 import { Character } from "../models/Character";
 import { Post, type PostType } from "../models/Post";
@@ -7,8 +8,8 @@ import { posts, postsToCharacters } from "../schema";
 import CharacterService from "./characterService";
 
 export default class PostService {
-  public static async createPost(postData: PostType) {
-    return await db.transaction(async (transaction) => {
+  public static createPost(postData: PostType) {
+    return db.transaction(async (transaction) => {
       const [post] = await transaction.insert(posts).values(postData).returning();
       if (!post) {
         transaction.rollback();
@@ -16,9 +17,9 @@ export default class PostService {
       }
 
       for (const character of postData.characters) {
-        await transaction.insert(postsToCharacters).values({ characterId: character.id, postId: post.messageId });
+        void transaction.insert(postsToCharacters).values({ characterId: character.id, postId: post.messageId });
         character.lastPostAt = DateTime.now().toJSDate();
-        await CharacterService.updateCharacter(character);
+        void CharacterService.updateCharacter(character);
       }
 
       return new Post({ ...post, characters: postData.characters });
@@ -41,11 +42,11 @@ export default class PostService {
     });
   }
 
-  public static async updatePostContentByMessageId(messageId: string, content: string) {
-    return await db.update(posts).set({ content }).where(eq(posts.messageId, messageId));
+  public static updatePostContentByMessageId(messageId: string, content: string) {
+    return db.update(posts).set({ content }).where(eq(posts.messageId, messageId));
   }
 
-  public static async deletePostByMessageId(messageId: string) {
-    return await db.delete(posts).where(eq(posts.messageId, messageId));
+  public static deletePostByMessageId(messageId: string) {
+    return db.delete(posts).where(eq(posts.messageId, messageId));
   }
 }

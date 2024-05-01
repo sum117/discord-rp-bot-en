@@ -1,4 +1,6 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
+
 import enUS from "../locales/en-US.json";
 import ptBr from "../locales/pt-BR.json";
 import UserService from "../services/userService";

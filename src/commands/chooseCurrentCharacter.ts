@@ -1,4 +1,5 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
+
 import { CHARACTER_AUTO_COMPLETE_NAME, characterAutoComplete } from "../data/shared";
 import CharacterService from "../services/characterService";
 import UserService from "../services/userService";

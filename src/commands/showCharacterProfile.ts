@@ -1,6 +1,7 @@
-import { ComponentType, Message, type BaseMessageOptions, type ChatInputCommandInteraction } from "discord.js";
+import { type BaseMessageOptions, type ChatInputCommandInteraction, ComponentType, type Message } from "discord.js";
 import { Duration } from "luxon";
-import { RoleplayEvents, bot } from "..";
+
+import { bot, RoleplayEvents } from "..";
 import { characterAutoComplete } from "../data/shared";
 import CharacterService from "../services/characterService";
 import UserService from "../services/userService";
@@ -23,7 +24,9 @@ export default class ShowCharacterProfile extends BaseCommand {
     });
   }
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-    if (!interaction.inCachedGuild()) return;
+    if (!interaction.inCachedGuild()) {
+      return;
+    }
     const characterId = interaction.options.getNumber("character", true);
 
     await interaction.deferReply({ fetchReply: true });
@@ -41,7 +44,7 @@ export default class ShowCharacterProfile extends BaseCommand {
         messageOptions,
         character,
         user,
-        async (characterPanelMessage: Message) => {
+        (characterPanelMessage: Message) => {
           if (buttons) {
             const buttonCollector = characterPanelMessage.createMessageComponentCollector({
               filter: (buttonInteraction) =>

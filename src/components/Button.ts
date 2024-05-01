@@ -1,21 +1,22 @@
-import { ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
+import type { ButtonInteraction } from "discord.js";
+import { ButtonBuilder, ButtonStyle } from "discord.js";
 
 export interface BaseButonData {
   customId: string;
-  style?: ButtonStyle;
-  label: string;
   disabled?: boolean;
   emoji?: string;
+  label: string;
+  style?: ButtonStyle;
 }
 export interface LinkButtonData extends BaseButonData {
+  onClick?: never;
   style: ButtonStyle.Link;
   url: string;
-  onClick?: never;
 }
 export interface CommonButtonData extends BaseButonData {
-  url?: never;
+  onClick: (interaction: ButtonInteraction) => Promise<void> | void;
   style?: Exclude<ButtonStyle, ButtonStyle.Link>;
-  onClick: (interaction: ButtonInteraction) => Promise<void>;
+  url?: never;
 }
 
 export type ButtonData = LinkButtonData | CommonButtonData;
@@ -23,10 +24,10 @@ export class Button {
   public customId: string;
   public style: ButtonStyle = ButtonStyle.Primary;
   public label: string;
-  public disabled: boolean = false;
+  public disabled = false;
   public emoji?: string;
   public url?: string;
-  public onClick?: (interaction: ButtonInteraction) => Promise<void>;
+  public onClick?: (interaction: ButtonInteraction) => Promise<void> | void;
 
   public constructor(data: ButtonData) {
     this.customId = data.customId;

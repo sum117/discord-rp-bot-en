@@ -7,23 +7,23 @@ import type {
 } from "discord.js";
 
 export type BaseCommandData = {
-  name: string;
-  nameLocalizations?: LocalizationMap;
+  autocomplete?: (interaction: AutocompleteInteraction) => Promise<void> | void;
   description: string;
   descriptionLocalizations?: LocalizationMap;
+  name: string;
+  nameLocalizations?: LocalizationMap;
   options: ApplicationCommandOptionData[];
-  autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
 };
 
 export abstract class BaseCommand {
   public data: ApplicationCommandData & {
-    name: string;
-    options: ApplicationCommandOptionData[];
+    autocomplete?: (interaction: AutocompleteInteraction) => Promise<void> | void;
     description: string;
-    nameLocalizations?: LocalizationMap;
     descriptionLocalizations?: LocalizationMap;
+    name: string;
+    nameLocalizations?: LocalizationMap;
 
-    autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
+    options: ApplicationCommandOptionData[];
   };
   public constructor({ name, description, options, autocomplete, ...rest }: BaseCommandData) {
     this.data = {

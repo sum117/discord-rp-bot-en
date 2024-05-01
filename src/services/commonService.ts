@@ -1,4 +1,4 @@
-import { Message, type CommandInteraction } from "discord.js";
+import { type CommandInteraction, Message } from "discord.js";
 
 export default class CommonService {
   public static async tryDeleteMessage(messageOrCommand: Message | CommandInteraction, time?: number) {
@@ -20,14 +20,16 @@ export default class CommonService {
     return input.replace(/([a-z](?=[A-Z]))/g, "$1 ");
   }
 
-  public static async wait(time: number) {
-    return new Promise((resolve) => setTimeout(resolve, time));
+  public static wait(time: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, time);
+    });
   }
 
   public static getRandomColor() {
-    var letters = "0123456789ABCDEF";
-    var color = "#";
-    for (var i = 0; i < 6; i++) {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
     return color;

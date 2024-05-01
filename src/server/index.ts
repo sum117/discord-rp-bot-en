@@ -1,7 +1,8 @@
-import CharacterService from "@/services/characterService";
-import UserService from "@/services/userService";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+
+import CharacterService from "@/services/characterService";
+import UserService from "@/services/userService";
 
 const api = new Hono();
 

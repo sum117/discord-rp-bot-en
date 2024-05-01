@@ -1,4 +1,6 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
+
 import Plugin, { type PluginCommand } from "../models/Plugin";
 import CharacterService from "../services/characterService";
 import { ServerService } from "../services/serverService";
@@ -185,7 +187,9 @@ const giveMoneyCommand: PluginCommand = {
 export const moneyPlugin = new Plugin({
   async onBeforeShowCharacterProfile(messageOptions, character, user, server) {
     const embed = messageOptions.embeds?.at(0);
-    if (!embed) return;
+    if (!embed) {
+      return;
+    }
     const builder = EmbedBuilder.from(embed);
     const money = await CharacterService.getCharacterMoney({ characterId: character.id, serverId: server.id });
     const translate = user.getTranslateFunction();
@@ -195,7 +199,7 @@ export const moneyPlugin = new Plugin({
         value: `**${money}** 🪙`,
       },
     ]);
-    messageOptions.embeds = [builder];
+    messageOptions = { ...messageOptions, embeds: [embed] };
   },
   author: "sum117",
   commands: [addMoneyCommand, removeMoneyCommand, giveMoneyCommand],

@@ -1,6 +1,7 @@
+import { RollemParserV1 } from "@rollem/language";
+
 import Plugin from "@/models/Plugin";
 import UserService from "@/services/userService";
-import { RollemParserV1 } from "@rollem/language";
 
 const DICE_EMOJI = "<:1d20:1232390287926497280>";
 export const dndPlugin = new Plugin({
