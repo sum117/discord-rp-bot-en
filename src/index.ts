@@ -277,14 +277,7 @@ const server = new Hono();
 server.route("/api", api);
 bot.login(Bun.env.BOT_TOKEN);
 
-const isDevelopment = Bun.env.NODE_ENV === "development";
-const getCertFiles = () => ({
-  cert: Bun.file("certificate.pem"),
-  key: Bun.file("private.key"),
-});
-const tls = isDevelopment ? undefined : getCertFiles();
 export default {
   port: 3000,
   fetch: server.fetch,
-  tls,
 };
