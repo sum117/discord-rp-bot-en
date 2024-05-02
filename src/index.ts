@@ -276,8 +276,8 @@ bot.on(Events.Error, (error) => {
 const server = new Hono();
 server.route("/api", api);
 bot.login(Bun.env.BOT_TOKEN);
-
 export default {
   port: 3000,
+  hostname: "localhost",
   fetch: server.fetch,
 };
