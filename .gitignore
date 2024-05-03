@@ -114,7 +114,6 @@ web_modules/
 
 .next
 out
-
 # Nuxt.js build / generate output
 
 .nuxt
@@ -175,3 +174,6 @@ build
 # Finder (MacOS) folder config
 .DS_Store
 
+# Database
+
+sqlite.db

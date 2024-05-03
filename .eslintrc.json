@@ -28,7 +28,6 @@
       "no-promise-executor-return": "error",
       "no-unsafe-optional-chaining": "error",
       "no-useless-backreference": "error",
-      "require-atomic-updates": "error",
       "require-await": "error",
       "no-await-in-loop": "error",
       "spaced-comment": "error",

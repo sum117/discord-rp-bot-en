@@ -199,7 +199,7 @@ export const moneyPlugin = new Plugin({
         value: `**${money}** 🪙`,
       },
     ]);
-    messageOptions = { ...messageOptions, embeds: [builder] };
+    messageOptions.embeds = [builder];
   },
   author: "sum117",
   commands: [addMoneyCommand, removeMoneyCommand, giveMoneyCommand],
