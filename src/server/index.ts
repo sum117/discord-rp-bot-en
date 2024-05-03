@@ -62,4 +62,36 @@ api.patch("/characters/set-active/:userId/:characterId", async (context) => {
   });
 });
 
+api.post("/characters", async (context) => {
+  const userId = context.req.query("userId");
+  if (!userId || !matchDiscordId.test(userId)) {
+    return context.json({ ok: false, error: "Invalid user id" }, 400);
+  }
+
+  const character = await context.req.json();
+  if (character.imageUrl && !character.imageUrl.startsWith("data:image/")) {
+    return context.json({ ok: false, error: "Invalid image" }, 400);
+  }
+  if (character.imageUrl) {
+    const imgurResponse = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: "Client-ID " + Bun.env.IMGUR_CLIENT_ID,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ image: character.imageUrl }),
+    });
+    const imgurJson = await imgurResponse.json();
+    if (!imgurJson.success) {
+      return context.json({ ok: false, error: "Error uploading image" }, 500);
+    }
+    character.imageUrl = imgurJson.data.link;
+  } else {
+    return context.json({ ok: false, error: "Image is required" }, 400);
+  }
+
+  const newCharacter = await CharacterService.createCharacter({ authorId: userId, ...character });
+  return context.json({ ok: true, character: newCharacter });
+});
+
 export default api;
