@@ -12,6 +12,7 @@ import {
   Partials,
 } from "discord.js";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 
 /**
  * Currently, bun build doesn't support import * from index files, so I have to import the commands one by one to make sure they are included in the build.
@@ -274,6 +275,7 @@ bot.on(Events.Error, (error) => {
 });
 
 const server = new Hono();
+server.use("/api/*", cors({ origin: "*", allowMethods: ["GET", "POST", "PATCH"] }));
 server.route("/api", api);
 bot.login(Bun.env.BOT_TOKEN);
 export default {

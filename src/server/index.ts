@@ -1,12 +1,11 @@
 import { Hono } from "hono";
-import { cors } from "hono/cors";
+import { DateTime } from "luxon";
 
 import CharacterService from "@/services/characterService";
 import UserService from "@/services/userService";
 
 const api = new Hono();
 
-api.use(cors());
 const matchDiscordId = new RegExp("^[0-9]{18,20}$");
 
 api.get("/characters/:userId", async (context) => {
@@ -62,36 +61,51 @@ api.patch("/characters/set-active/:userId/:characterId", async (context) => {
   });
 });
 
-api.post("/characters", async (context) => {
-  const userId = context.req.query("userId");
+api.post("/characters/create/:userId", async (context) => {
+  const userId = context.req.param("userId");
   if (!userId || !matchDiscordId.test(userId)) {
     return context.json({ ok: false, error: "Invalid user id" }, 400);
   }
-
-  const character = await context.req.json();
-  if (character.imageUrl && !character.imageUrl.startsWith("data:image/")) {
-    return context.json({ ok: false, error: "Invalid image" }, 400);
-  }
-  if (character.imageUrl) {
-    const imgurResponse = await fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: "Client-ID " + Bun.env.IMGUR_CLIENT_ID,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ image: character.imageUrl }),
-    });
-    const imgurJson = await imgurResponse.json();
-    if (!imgurJson.success) {
-      return context.json({ ok: false, error: "Error uploading image" }, 500);
-    }
-    character.imageUrl = imgurJson.data.link;
-  } else {
+  const characterFormData = await context.req.parseBody<{
+    name: string;
+    image: File;
+    title: string;
+    embedColor: string;
+  }>();
+  const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+  if (!(characterFormData.image instanceof File)) {
     return context.json({ ok: false, error: "Image is required" }, 400);
   }
+  const isImage = (image: File): image is File & { type: string } => {
+    return "type" in image && typeof image.type === "string" && allowedTypes.includes(image.type);
+  };
+  if (!isImage(characterFormData.image)) {
+    return context.json({ ok: false, error: "Invalid image type" }, 400);
+  }
 
-  const newCharacter = await CharacterService.createCharacter({ authorId: userId, ...character });
-  return context.json({ ok: true, character: newCharacter });
+  const formData = await context.req.formData();
+  formData.delete("name");
+  formData.delete("embedColor");
+  formData.append("image", characterFormData.image);
+  formData.append("type", "image");
+  formData.append("title", characterFormData.name + " - " + DateTime.now().toISO());
+
+  console.log(formData);
+
+  const imgurResponse = await fetch("https://api.imgur.com/3/image", {
+    method: "POST",
+    headers: {
+      Authorization: "Client-ID " + Bun.env.IMGUR_CLIENT_ID,
+    },
+    body: formData,
+  });
+  const imgurJson = await imgurResponse.json();
+  if (!imgurJson.success) {
+    return context.json({ ok: false, error: "Error uploading image" }, 500);
+  }
+  const characterToCreate = { ...characterFormData, imageUrl: imgurJson.data.link };
+  const newCharacter = await CharacterService.createCharacter({ authorId: userId, ...characterToCreate });
+  return context.json({ ok: true, character: newCharacter }, 201);
 });
 
 export default api;
