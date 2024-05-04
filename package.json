@@ -7,9 +7,11 @@
     "drizzle-orm": "^0.30.10",
     "hono": "^4.2.9",
     "i18next": "^23.11.3",
-    "luxon": "^3.4.4"
+    "luxon": "^3.4.4",
+    "waifuvault-node-api": "^1.5.1"
   },
   "devDependencies": {
+    "@types/node": "^20.12.8",
     "typescript": "^5.4.5",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/bun": "latest",

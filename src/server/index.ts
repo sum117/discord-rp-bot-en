@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
-import { DateTime } from "luxon";
+import Waifuvault from "waifuvault-node-api";
 
 import CharacterService from "@/services/characterService";
 import UserService from "@/services/userService";
@@ -67,7 +67,7 @@ api.post(
   bodyLimit({
     maxSize: 50 * 1024 * 1024,
     onError: (context) => {
-      context.json({ ok: false, error: "File too large" }, 413);
+      return context.json({ ok: false, error: "File too large" }, 413);
     },
   }),
   async (context) => {
@@ -84,33 +84,16 @@ api.post(
     if (!(characterFormData.image instanceof File)) {
       return context.json({ ok: false, error: "Image is required" }, 400);
     }
-
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-    const isImage = (image: File): image is File & { type: string } => {
-      return "type" in image && typeof image.type === "string" && allowedTypes.includes(image.type);
-    };
-    if (!isImage(characterFormData.image)) {
+    if (!allowedTypes.includes(characterFormData.image.type)) {
       return context.json({ ok: false, error: "Invalid image type" }, 400);
     }
-
-    const formData = await context.req.formData();
-    formData.delete("name");
-    formData.delete("embedColor");
-    formData.append("type", characterFormData.image.type);
-    formData.append("title", characterFormData.name + " - " + DateTime.now().toISO());
-    const imgurResponse = await fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: "Client-ID " + Bun.env.IMGUR_CLIENT_ID,
-      },
-      body: formData,
+    const buffer = Buffer.from(await characterFormData.image.arrayBuffer());
+    const uploadedFile = await Waifuvault.uploadFile({
+      file: buffer,
+      filename: `${characterFormData.name}.${characterFormData.image.type.split("/").pop()}`,
     });
-    const imgurJson = await imgurResponse.json();
-    if (!imgurJson.success) {
-      console.error(imgurJson);
-      return context.json({ ok: false, error: "Error uploading image" }, 500);
-    }
-    const characterToCreate = { ...characterFormData, imageUrl: imgurJson.data.link };
+    const characterToCreate = { ...characterFormData, imageUrl: uploadedFile.url };
     const newCharacter = await CharacterService.createCharacter({ authorId: userId, ...characterToCreate });
     return context.json({ ok: true, character: newCharacter }, 201);
   },
