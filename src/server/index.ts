@@ -6,7 +6,7 @@ import UserService from "@/services/userService";
 
 const api = new Hono();
 
-api.use("/characters/*", cors());
+api.use(cors());
 const matchDiscordId = new RegExp("^[0-9]{18,20}$");
 
 api.get("/characters/:userId", async (context) => {
