@@ -81,10 +81,11 @@ api.post(
       title: string;
       embedColor: string;
     }>({});
-    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!(characterFormData.image instanceof File)) {
       return context.json({ ok: false, error: "Image is required" }, 400);
     }
+
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     const isImage = (image: File): image is File & { type: string } => {
       return "type" in image && typeof image.type === "string" && allowedTypes.includes(image.type);
     };
@@ -95,12 +96,8 @@ api.post(
     const formData = await context.req.formData();
     formData.delete("name");
     formData.delete("embedColor");
-    formData.append("image", characterFormData.image);
-    formData.append("type", "image");
+    formData.append("type", characterFormData.image.type);
     formData.append("title", characterFormData.name + " - " + DateTime.now().toISO());
-
-    console.log(formData);
-
     const imgurResponse = await fetch("https://api.imgur.com/3/image", {
       method: "POST",
       headers: {
@@ -110,6 +107,7 @@ api.post(
     });
     const imgurJson = await imgurResponse.json();
     if (!imgurJson.success) {
+      console.error(imgurJson);
       return context.json({ ok: false, error: "Error uploading image" }, 500);
     }
     const characterToCreate = { ...characterFormData, imageUrl: imgurJson.data.link };
