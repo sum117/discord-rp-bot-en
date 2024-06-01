@@ -6,6 +6,7 @@
     "module": "ESNext",
     "moduleDetection": "force",
     "jsx": "react-jsx",
+    "jsxImportSource": "typed-htmx/typed-html",
     "allowJs": true,
 
     // Bundler mode
