@@ -15,6 +15,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 import api from "./api";
+import authApi from "./api/auth";
 /**
  * Currently, bun build doesn't support import * from index files, so I have to import the commands one by one to make sure they are included in the build.
  * This is a workaround until this issue is fixed:
@@ -276,8 +277,10 @@ bot.on(Events.Error, (error) => {
 });
 
 const server = new Hono();
-server.use("/api/*", cors({ origin: "*", allowMethods: ["GET", "POST", "PATCH"] }));
+server.use(cors({ origin: "*", allowMethods: ["GET", "POST", "REPLACE", "DELETE"] }));
+server.use("/api/*");
 server.route("/api", api);
+server.route("/auth", authApi);
 server.route("/", web);
 bot.login(Bun.env.BOT_TOKEN);
 export default {
