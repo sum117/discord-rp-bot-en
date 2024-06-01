@@ -8,10 +8,11 @@ import { TEXT_INPUT_CUSTOM_IDS } from "../data/constants";
 import db from "../database";
 import { translateFactory } from "../i18n";
 import { Character, type CharacterType } from "../models/Character";
-import { characters, characterServerData, usersToCharacters } from "../schema";
+import { characters, characterServerData, savedDices, usersToCharacters } from "../schema";
 import { ServerService } from "./serverService";
 import UserService from "./userService";
 
+type DiceInsertData = typeof savedDices.$inferInsert;
 export default class CharacterService {
   public static getCreateCharacterModal(userOrServerLanguage: "pt-BR" | "en-US" = "pt-BR") {
     const translate = translateFactory(userOrServerLanguage);
@@ -234,5 +235,10 @@ export default class CharacterService {
   public static async getCharacterMoney({ characterId, serverId }: { characterId: number; serverId: string }) {
     const serverData = await ServerService.getOrCreateCharacterServerData(characterId, serverId);
     return serverData.money;
+  }
+
+  public static async createCharacterDice({ characterId, name, dice, description }: DiceInsertData) {
+    const [data] = await db.insert(savedDices).values({ characterId, name, dice, description }).returning();
+    return data;
   }
 }

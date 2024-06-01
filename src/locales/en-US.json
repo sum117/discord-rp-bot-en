@@ -112,5 +112,12 @@
   "pluginAuthor": "Author",
   "removePlugin": "Remove {{pluginName}}",
   "addPlugin": "Add {{pluginName}}",
-  "roll": "{{- emoji}} **{{characterName}}** rolled {{roll}}!"
+  "roll": "{{- emoji}} **{{characterName}}** rolled {{roll}}!",
+  "createDice": "Create Dice",
+  "enterDiceNamePlaceholder": "Enter dice name",
+  "enterDicePlaceholder": "Enter dice",
+  "enterDiceDescriptionPlaceholder": "Enter dice description",
+  "dice": "Dice",
+  "description": "Description",
+  "diceCreated": "{{- emoji}} Dice **{{diceName}}** with description **{{diceDescription}}** created successfully for character **{{characterName}}**."
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { relations, sql } from "drizzle-orm";
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
@@ -61,6 +62,24 @@ export const charactersRelations = relations(characters, ({ one, many }) => ({
   categories: many(categoriesToCharacters),
   posts: many(postsToCharacters),
   items: many(itemsCharacters),
+  savedDices: many(savedDices),
+}));
+
+export const savedDices = sqliteTable("savedDices", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  characterId: integer("characterId")
+    .notNull()
+    .references(() => characters.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  dice: text("dice").notNull(),
+  description: text("description"),
+});
+
+export const savedDicesRelations = relations(savedDices, ({ one }) => ({
+  character: one(characters, {
+    fields: [savedDices.characterId],
+    references: [characters.id],
+  }),
 }));
 
 export const servers = sqliteTable("servers", {
@@ -195,7 +214,7 @@ export const items = sqliteTable("items", {
   imageUrl: text("imageUrl"),
 });
 
-export const itemsRelations = relations(items, ({ one, many }) => ({
+export const itemsRelations = relations(items, ({ one }) => ({
   author: one(users, {
     fields: [items.authorId],
     references: [users.id],
@@ -204,8 +223,8 @@ export const itemsRelations = relations(items, ({ one, many }) => ({
 
 export const itemsCharacters = sqliteTable("itemsCharacters", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  itemId: text("itemId").notNull(),
-  characterId: text("characterId").notNull(),
+  itemId: integer("itemId").notNull(),
+  characterId: integer("characterId").notNull(),
   quantity: integer("quantity").notNull().default(0),
   isEquipped: integer("isEquipped", { mode: "boolean" }).notNull().default(false),
 });

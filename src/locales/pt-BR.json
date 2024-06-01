@@ -110,5 +110,12 @@
   "pluginAuthor": "Autor",
   "removePlugin": "Remover {{pluginName}}",
   "addPlugin": "Adicionar {{pluginName}}",
-  "roll": "{{- emoji}} **{{characterName}}** rolou {{roll}}!"
+  "roll": "{{- emoji}} **{{characterName}}** rolou {{roll}}!",
+  "createDice": "Criar Dado",
+  "enterDiceNamePlaceholder": "Digite o nome do dado",
+  "enterDicePlaceholder": "Digite o dado",
+  "enterDiceDescriptionPlaceholder": "Digite a descrição do dado",
+  "dice": "Dado",
+  "description": "Descrição",
+  "diceCreated": " {{- emoji}} Dado **{{diceName}}** com descrição **{{diceDescription}}** criado com sucesso para o personagem **{{characterName}}**."
 }

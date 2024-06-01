@@ -1,4 +1,5 @@
 import i18next, { type TOptions } from "i18next";
+
 import enUS from "./locales/en-US.json";
 import ptBr from "./locales/pt-BR.json";
 
