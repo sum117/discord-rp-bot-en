@@ -14,6 +14,7 @@ import {
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
+import api from "./api";
 /**
  * Currently, bun build doesn't support import * from index files, so I have to import the commands one by one to make sure they are included in the build.
  * This is a workaround until this issue is fixed:
@@ -38,9 +39,9 @@ import type { User } from "./models/User";
 import { dndPlugin } from "./plugins/dndPlugin";
 import { moneyPlugin } from "./plugins/moneyPlugin";
 import type { characters, items } from "./schema";
-import api from "./server";
 import PostService from "./services/postService";
 import { ServerService } from "./services/serverService";
+import web from "./web";
 
 export interface RoleplayEventPayloads {
   characterCreate: [character: typeof characters.$inferSelect];
@@ -277,6 +278,7 @@ bot.on(Events.Error, (error) => {
 const server = new Hono();
 server.use("/api/*", cors({ origin: "*", allowMethods: ["GET", "POST", "PATCH"] }));
 server.route("/api", api);
+server.route("/", web);
 bot.login(Bun.env.BOT_TOKEN);
 export default {
   port: 3000,

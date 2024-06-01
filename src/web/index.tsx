@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { Navbar } from "./components/Navbar";
+import { Navbar } from "./components/navbar";
 
 const web = new Hono();
 
