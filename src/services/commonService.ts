@@ -1,4 +1,5 @@
 import { type CommandInteraction, Message } from "discord.js";
+import Waifuvault from "waifuvault-node-api";
 
 export default class CommonService {
   public static async tryDeleteMessage(messageOrCommand: Message | CommandInteraction, time?: number) {
@@ -54,5 +55,17 @@ export default class CommonService {
 
   public static randomIntFromInterval(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  public static async uploadToWaifuvault(url: string) {
+    const parsedUrl = new URL(url);
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const uploadedFile = await Waifuvault.uploadFile({
+      file: buffer,
+      filename: parsedUrl.pathname.split("/").pop() ?? "image.png",
+    });
+    return uploadedFile.url;
   }
 }
