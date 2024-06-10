@@ -296,28 +296,33 @@ export class Character implements CharacterType {
       }),
       onSelection: async (selectMenuInteraction) => {
         const selectedField = selectMenuInteraction.values.at(0) as (typeof EDITABLE_PROFILE_FIELDS)[number];
-        const editPopup = new Modal<Record<(typeof EDITABLE_PROFILE_FIELDS)[number], string>>().addTextInput({
-          customId: selectedField,
-          style: LONG_PROFILE_FIELDS.includes(selectedField) ? TextInputStyle.Paragraph : TextInputStyle.Short,
-          label: translate(selectedField, { lng: language }),
-          placeholder: translate(`${selectedField}InputPlaceholder`, { lng: language }),
-          maxLength: LONG_PROFILE_FIELDS.includes(selectedField) ? TextInputLength.Paragraph : TextInputLength.Medium,
-          value: this.isDateField(selectedField)
-            ? Intl.DateTimeFormat(language).format(this[selectedField]!)
-            : this[selectedField]?.toString() ?? "",
-        });
+        const editPopup = new Modal<Record<(typeof EDITABLE_PROFILE_FIELDS)[number], string>>()
+          .setCustomId(selectedField)
+          .addTextInput({
+            customId: selectedField,
+            style: LONG_PROFILE_FIELDS.includes(selectedField) ? TextInputStyle.Paragraph : TextInputStyle.Short,
+            label: translate(selectedField, { lng: language }),
+            placeholder: translate(`${selectedField}InputPlaceholder`, { lng: language }),
+            maxLength: LONG_PROFILE_FIELDS.includes(selectedField) ? TextInputLength.Paragraph : TextInputLength.Medium,
+            value: this.isDateField(selectedField)
+              ? Intl.DateTimeFormat(language).format(this[selectedField]!)
+              : this[selectedField]?.toString() ?? "",
+          });
 
         await selectMenuInteraction.showModal(editPopup);
         const modalSubmitInteraction = await selectMenuInteraction
           .awaitModalSubmit({
             time: Duration.fromObject({ minutes: 120 }).as("milliseconds"),
+            filter: (interaction) => interaction.customId === selectedField,
           })
           .catch(() => {
             console.error("User took too long to submit the modal.");
             return null;
           });
         if (modalSubmitInteraction) {
-          await modalSubmitInteraction.deferReply();
+          if (!modalSubmitInteraction.deferred || !modalSubmitInteraction.replied) {
+            await modalSubmitInteraction.deferReply();
+          }
           const data = editPopup.getUserResponse(modalSubmitInteraction);
           const updateCharacter = await CharacterService.updateCharacter(
             this.setField(selectedField, data[selectedField]),
