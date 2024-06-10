@@ -43,7 +43,7 @@ export default class onCharacterMessage extends BaseEvent {
       const mentionsRegex = new RegExp(`(${mentionsString})`, "g");
       message.content = message.content.replaceAll(mentionsRegex, "");
     }
-    const messageOptions = data.character.getCharacterPostFromMessage(message);
+    const messageOptions = await data.character.getCharacterPostFromMessage(message);
     if (messageOptions) {
       messageOptions.content = mentionsString;
       bot.emit(RoleplayEvents.CharacterPost, message, messageOptions, data.character);

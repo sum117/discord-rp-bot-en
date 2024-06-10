@@ -1,6 +1,5 @@
 import {
   ActionRowBuilder,
-  AttachmentBuilder,
   type BaseMessageOptions,
   type ButtonBuilder,
   type ButtonInteraction,
@@ -197,29 +196,26 @@ export class Character implements CharacterType {
     return messageOptions;
   }
 
-  public getCharacterPostFromMessage(message: Message): BaseMessageOptions {
+  public async getCharacterPostFromMessage(message: Message): Promise<BaseMessageOptions> {
     const data: BaseMessageOptions = {};
     const embed = this.getBaseEmbed();
     embed.setAuthor({
       name: this.title ?? message.author.username,
       iconURL: this.title ? undefined : message.author.displayAvatarURL(),
     });
-    if (message.content.trim() !== "") {
-      embed.setDescription(message.content);
-    }
+
     if (message.attachments.size) {
       const url = message.attachments.first()!.url;
       if (CommonService.isAbsoluteImageUrl(url)) {
-        const parsedUrl = new URL(url);
-        const fileName = parsedUrl.pathname.split("/").pop();
-        if (fileName) {
-          embed.setImage(`attachment://${fileName}`);
-          const attachment = new AttachmentBuilder(url).setName(fileName);
-          data.files = [attachment];
+        const embedImageUrl = await CommonService.uploadToWaifuvault(url);
+        if (embedImageUrl) {
+          embed.setImage(embedImageUrl);
         }
       }
     }
-
+    if (message.content.trim() !== "") {
+      embed.setDescription(message.content);
+    }
     return { embeds: [embed], ...data };
   }
 
