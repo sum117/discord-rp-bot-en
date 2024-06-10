@@ -1,13 +1,12 @@
 import {
   ActionRowBuilder,
-  type APIEmbed,
   AttachmentBuilder,
   type BaseMessageOptions,
   type ButtonBuilder,
   type ButtonInteraction,
+  EmbedBuilder,
   type HexColorString,
   type Message,
-  resolveColor,
   type StringSelectMenuBuilder,
   TextInputStyle,
 } from "discord.js";
@@ -119,15 +118,16 @@ export class Character implements CharacterType {
 
     return this;
   }
-  public getBaseEmbed(): APIEmbed {
-    return {
-      title: this.name,
-      color: resolveColor(<HexColorString>this.embedColor ?? <HexColorString>CommonService.getRandomColor()),
-      footer: {
+  public getBaseEmbed(): EmbedBuilder {
+    const embedBuilder = new EmbedBuilder()
+      .setTitle(this.name)
+      .setColor(<HexColorString>this.embedColor ?? <HexColorString>CommonService.getRandomColor())
+      .setFooter({
         text: `⬆️ Level ${this.level} | 💡 ${this.exp} XP`,
-      },
-      thumbnail: { url: this.imageUrl },
-    };
+      })
+      .setThumbnail(this.imageUrl);
+
+    return embedBuilder;
   }
   public getLevelingDetails() {
     const expRequiredForNextLevel = Math.floor(Math.pow(this.level, LEVELING_QUOTIENT));
@@ -175,7 +175,7 @@ export class Character implements CharacterType {
       value: `${levelingDetails.progressBar} ${this.level}/${MAX_CHARACTER_LEVEL}`,
       inline: true,
     });
-    embed.fields = fields;
+    embed.addFields(fields);
     const messageOptions: CharacterProfileMessageOptions = { embeds: [embed] };
     if (isEditing) {
       const { buttons, actionRow } = this.getFullProfileButtons(language);
@@ -200,18 +200,20 @@ export class Character implements CharacterType {
   public getCharacterPostFromMessage(message: Message): BaseMessageOptions {
     const data: BaseMessageOptions = {};
     const embed = this.getBaseEmbed();
-    embed.author = {
+    embed.setAuthor({
       name: this.title ?? message.author.username,
-      icon_url: this.title ? undefined : message.author.displayAvatarURL(),
-    };
-    embed.description = message.content;
+      iconURL: this.title ? undefined : message.author.displayAvatarURL(),
+    });
+    if (message.content.trim() !== "") {
+      embed.setDescription(message.content);
+    }
     if (message.attachments.size) {
       const url = message.attachments.first()!.url;
       if (CommonService.isAbsoluteImageUrl(url)) {
         const parsedUrl = new URL(url);
         const fileName = parsedUrl.pathname.split("/").pop();
         if (fileName) {
-          embed.image = { url: `attachment://${fileName}` };
+          embed.setImage(`attachment://${fileName}`);
           const attachment = new AttachmentBuilder(url).setName(fileName);
           data.files = [attachment];
         }
@@ -359,18 +361,20 @@ export class Character implements CharacterType {
     language: "en-US" | "pt-BR" = "en-US",
   ): BaseMessageOptions {
     const embed = this.getBaseEmbed();
-    delete embed.image;
-    delete embed.thumbnail;
-    delete embed.footer;
-    embed.title = translate(`${fieldKey}Suffix`, {
-      lng: language,
-      characterName: this.name,
-    });
+    embed.setImage(null);
+    embed.setThumbnail(null);
+    embed.setFooter(null);
+    embed.setTitle(
+      translate(`${fieldKey}Suffix`, {
+        lng: language,
+        characterName: this.name,
+      }),
+    );
     const fieldToDisplay = this[fieldKey];
     if (!fieldToDisplay || fieldToDisplay.trim() === "") {
-      embed.description = translate("notDefined", { lng: language });
+      embed.setDescription(translate("notDefined", { lng: language }));
     } else {
-      embed.description = fieldToDisplay;
+      embed.setDescription(fieldToDisplay);
     }
     return { embeds: [embed] };
   }
