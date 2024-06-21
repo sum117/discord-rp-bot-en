@@ -135,10 +135,10 @@ export class Character implements CharacterType {
     const filledBar = "🟩";
     const emptyBar = "⬛";
     const barLength = 10;
-    const barFill = Math.floor((percentage / 100) * barLength);
+    const barFill = Math.min(barLength, Math.floor((percentage / 100) * barLength));
     const barEmpty = barLength - barFill;
     return {
-      progressBar: `${filledBar.repeat(barFill)}${emptyBar.repeat(barEmpty)} ${percentage}%`,
+      progressBar: `${filledBar.repeat(barFill)}${emptyBar.repeat(barEmpty)} ${Math.min(percentage, 100)}%`,
       expRequiredForNextLevel,
       isLevelUp: (xp: number) => xp >= expRequiredForNextLevel && this.level < MAX_CHARACTER_LEVEL,
     };

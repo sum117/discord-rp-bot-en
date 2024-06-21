@@ -66,6 +66,7 @@ export default class onCharacterMessage extends BaseEvent {
           );
         } else {
           data.character.exp += xpEarned;
+          data.character.lastExpGainAt = new Date();
           await CharacterService.updateCharacter(data.character);
         }
       }
