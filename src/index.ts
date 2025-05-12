@@ -29,7 +29,7 @@ import ShowCharacterProfileCommand from "./commands/showCharacterProfile";
 import TopCommand from "./commands/top";
 import { BaseEvent } from "./events/baseEvent";
 import onCharacterMessageEvent from "./events/onCharacterMessage";
-import onCharacterMessageReactioEvent from "./events/onCharacterMessageReaction";
+import onCharacterMessageReactionEvent from "./events/onCharacterMessageReaction";
 /**
  *  ------------------------------------------------------------------------------
  */
@@ -114,7 +114,7 @@ export class RoleplayBot extends Client {
   public setUpEvents() {
     const eventSet = new Set<keyof RoleplayBotEventPayloads>();
     const eventClasses: Record<string, BaseEvent[]> = {};
-    for (const Event of [onCharacterMessageEvent, onCharacterMessageReactioEvent]) {
+    for (const Event of [onCharacterMessageEvent, onCharacterMessageReactionEvent]) {
       if (Event.prototype instanceof BaseEvent) {
         const event: BaseEvent = new Event();
         eventSet.add(event.runsOn);
