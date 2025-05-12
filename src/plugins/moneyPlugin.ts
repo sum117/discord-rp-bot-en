@@ -8,12 +8,14 @@ import UserService from "../services/userService";
 
 async function getEconomicDataFromInteraction(interaction: ChatInputCommandInteraction) {
   const discordUser = interaction.options.getUser("user", true);
-  const user = await UserService.getOrCreateUser(discordUser.id);
-  const translate = user.getTranslateFunction();
-
   const amount = interaction.options.getNumber("amount", true);
+
+  const hostUser = await UserService.getOrCreateUser(interaction.user.id);
+  const targetUser = await UserService.getOrCreateUser(discordUser.id);
+
+  const translate = hostUser.getTranslateFunction();
   const { character } = (await CharacterService.getCurrentCharacterByUserId(discordUser.id)) ?? {};
-  return { amount, character, translate };
+  return { amount, character, translate, targetUser };
 }
 
 async function handleMoneyCommand(
@@ -41,7 +43,7 @@ async function handleMoneyCommand(
   }
   const dependency = dependenciesMap[dependencyKey];
   if (!character) {
-    await interaction.editReply(translate("userNoCharacter"));
+    await interaction.editReply(translate("userNoCharacter", { user: interaction.user.username }));
     return;
   }
   await dependency.databaseFn({ characterId: character.id, amount, serverId: interaction.guild.id });
@@ -142,13 +144,23 @@ const giveMoneyCommand: PluginCommand = {
     }
     await interaction.deferReply({ ephemeral: true });
 
-    const { amount, character: targetCharacter, translate } = await getEconomicDataFromInteraction(interaction);
+    const {
+      amount,
+      character: targetCharacter,
+      translate,
+      targetUser,
+    } = await getEconomicDataFromInteraction(interaction);
     if (amount <= 0) {
-      await interaction.editReply(translate("invalidAmount"));
+      await interaction.editReply(translate("invalidAmount", { amount }));
       return;
     }
     if (!targetCharacter) {
-      await interaction.editReply(translate("userNoCharacter"));
+      await interaction.editReply(
+        translate("userNoCharacter", {
+          interpolation: { escapeValue: false },
+          user: `<@${targetUser.id}>`,
+        }),
+      );
       return;
     }
     const hostCurrentCharacter = await CharacterService.getCurrentCharacterByUserId(interaction.user.id);
@@ -163,7 +175,13 @@ const giveMoneyCommand: PluginCommand = {
     );
 
     if (hostCharacterServerData.money < amount) {
-      await interaction.editReply(translate("notEnoughMoney"));
+      await interaction.editReply(
+        translate("notEnoughMoney", {
+          amount: hostCharacterServerData.money,
+          characterName: hostCurrentCharacter.character.name,
+          targetCharacterName: targetCharacter.name,
+        }),
+      );
       return;
     }
 
