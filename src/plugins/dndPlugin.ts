@@ -3,7 +3,7 @@ import { RollemParserV1 } from "@rollem/language";
 import Plugin from "@/models/Plugin";
 import UserService from "@/services/userService";
 
-const DICE_EMOJI = "<:1d20:1232390287926497280>";
+const DICE_EMOJI = "🎲";
 export const dndPlugin = new Plugin({
   name: "dnd-plugin",
   nameLocalizations: {
