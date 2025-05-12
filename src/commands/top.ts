@@ -25,7 +25,7 @@ export default class TopCommand extends BaseCommand {
     const topCharacters = characters.map(
       (character, index) => `${index + 1}. ${character.name} - ${character.level} | ${character.posts.length} posts`,
     );
-    const response = ["# ✨ Character Vault Top 10", "\n"];
+    const response = ["# ✨ Equidade Chan Top 10", "\n"];
     void interaction.editReply([...response, ...topCharacters].join("\n"));
   }
 }
