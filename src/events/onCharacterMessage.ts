@@ -52,7 +52,7 @@ export default class onCharacterMessage extends BaseEvent {
 
       const { isLevelUp } = data.character.getLevelingDetails();
       const hasPassedXpCooldown =
-        DateTime.now().diff(DateTime.fromJSDate(data.character.lastExpGainAt ?? new Date()), "minutes").minutes >=
+        DateTime.fromJSDate(data.character.lastExpGainAt ?? new Date()).diffNow("minutes").minutes >=
         XP_COOLDOWN_MINUTES;
       if (hasPassedXpCooldown) {
         if (isLevelUp(xpEarned + data.character.exp)) {
@@ -66,7 +66,7 @@ export default class onCharacterMessage extends BaseEvent {
           );
         } else {
           data.character.exp += xpEarned;
-          data.character.lastExpGainAt = new Date();
+          data.character.lastExpGainAt = DateTime.now().toJSDate();
           await CharacterService.updateCharacter(data.character);
         }
       }
