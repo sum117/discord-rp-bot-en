@@ -21,7 +21,7 @@ export default class onCharacterMessage extends BaseEvent {
       },
     });
   }
-  async execute(message: Message<boolean>) {
+  async execute(message: Message<true>) {
     if (message.author.bot || bot.isEditing.get(message.author.id) === EditingState.Editing) {
       return;
     }
