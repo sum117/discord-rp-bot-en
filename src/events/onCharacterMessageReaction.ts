@@ -2,7 +2,7 @@ import type { MessageReaction } from "discord.js";
 import { Events } from "discord.js";
 import { Duration } from "luxon";
 
-import { bot,EditingState } from "..";
+import { bot, EditingState } from "..";
 import CommonService from "../services/commonService";
 import PostService from "../services/postService";
 import UserService from "../services/userService";
@@ -25,23 +25,27 @@ export default class onCharacterMessageReaction extends BaseEvent {
   }
 
   async execute(messageReaction: MessageReaction) {
-    if (!this.POSSIBLE_REACTIONS.includes(messageReaction.emoji.name ?? "")) {return;}
+    if (!this.POSSIBLE_REACTIONS.includes(messageReaction.emoji.name ?? "")) { return; }
 
     const post = await PostService.getPostByMessageId(messageReaction.message.id);
-    if (!post) {return;}
+    if (!post) { return; }
 
     const userWhoReacted = messageReaction.users.cache.last();
-    if (post.authorId !== userWhoReacted?.id) {return;}
+    if (post.authorId !== userWhoReacted?.id) { return; }
 
     if (messageReaction.emoji.name === "✏️") {
       const messageToEdit = await messageReaction.message.channel.messages.fetch(post.messageId).catch(() => {
         console.error("Message with ID ", post.messageId, " not found");
         return null;
       });
-      if (!messageToEdit) {return;}
+      if (!messageToEdit) { return; }
 
       const apiEmbed = messageToEdit.embeds.at(0);
       if (apiEmbed) {
+        if (!messageToEdit.inGuild()) {
+          console.error("Message from user ", messageToEdit.author.id, " is not in a guild, so it cannot be edited");
+          return;
+        }
         const messageCollector = messageToEdit.channel.createMessageCollector({
           filter: (collectedMessage) => collectedMessage.author.id === post.authorId,
           max: 1,
@@ -57,12 +61,17 @@ export default class onCharacterMessageReaction extends BaseEvent {
         bot.isEditing.set(post.authorId, EditingState.Editing);
         void CommonService.tryDeleteMessage(feedback, Duration.fromObject({ seconds: 10 }).as("milliseconds"));
         messageCollector.on("collect", async (collectedMessage) => {
+          if (!collectedMessage.inGuild()) {
+            console.error("Message from user ", collectedMessage.author.id, " is not in a guild, so it cannot be edited");
+            return;
+          }
           try {
             const character = post.characters.at(0);
-            if (!character) {return;}
+            if (!character) { return; }
             await messageToEdit.edit(await character.getCharacterPostFromMessage(collectedMessage));
             await PostService.updatePostContentByMessageId(post.messageId, collectedMessage.content);
             void CommonService.tryDeleteMessage(collectedMessage);
+
             const successFeedback = await collectedMessage.channel.send(
               translate("editPostSuccess", { user: userWhoReacted.toString() }),
             );
