@@ -23,6 +23,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
     fields: [users.currentCharacterId],
     references: [characters.id],
   }),
+  serverData: many(userServerData),
 }));
 
 export const characters = sqliteTable("characters", {
@@ -92,6 +93,34 @@ export const characterServerDataRelations = relations(characterServerData, ({ on
   }),
   server: one(servers, {
     fields: [characterServerData.serverId],
+    references: [servers.id],
+  }),
+}));
+
+export const userServerData = sqliteTable(
+  "userServerData",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    serverId: text("serverId")
+      .notNull()
+      .references(() => servers.id, { onDelete: "cascade" }),
+    streak: integer("streak").notNull().default(0),
+    lastStreakAt: integer("lastStreakAt", { mode: "timestamp_ms" }).default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (table) => ({
+    primaryKey: primaryKey({ columns: [table.userId, table.serverId] }),
+  }),
+);
+
+export const userServerDataRelations = relations(userServerData, ({ one }) => ({
+  user: one(users, {
+    fields: [userServerData.userId],
+    references: [users.id],
+  }),
+  server: one(servers, {
+    fields: [userServerData.serverId],
     references: [servers.id],
   }),
 }));
