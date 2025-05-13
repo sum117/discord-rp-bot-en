@@ -81,6 +81,16 @@ CREATE TABLE `servers` (
 	`dndPluginEnabled` integer DEFAULT false NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `userServerData` (
+	`userId` text NOT NULL,
+	`serverId` text NOT NULL,
+	`streak` integer DEFAULT 0 NOT NULL,
+	`lastStreakAt` integer DEFAULT (CURRENT_TIMESTAMP),
+	PRIMARY KEY(`serverId`, `userId`),
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`serverId`) REFERENCES `servers`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`joinedBotAt` integer DEFAULT (CURRENT_TIMESTAMP),
