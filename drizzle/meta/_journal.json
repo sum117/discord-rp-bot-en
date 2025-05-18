@@ -8,6 +8,13 @@
       "when": 1747093534031,
       "tag": "0000_broad_mongoose",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1747542479261,
+      "tag": "0001_wakeful_excalibur",
+      "breakpoints": true
     }
   ]
 }

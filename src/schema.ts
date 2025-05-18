@@ -68,6 +68,7 @@ export const servers = sqliteTable("servers", {
   id: text("id").primaryKey(),
   moneyPluginEnabled: integer("moneyPluginEnabled", { mode: "boolean" }).notNull().default(false),
   dndPluginEnabled: integer("dndPluginEnabled", { mode: "boolean" }).notNull().default(false),
+  streakPluginEnabled: integer("streakPluginEnabled", { mode: "boolean" }).notNull().default(false),
 });
 
 export const characterServerData = sqliteTable(

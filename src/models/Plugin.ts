@@ -18,6 +18,7 @@ type PluginData = {
   exampleParagraphsLocalizations: Record<string, Array<string>>;
   name: string;
   nameLocalizations: Record<"pt-BR", string>;
+  onUserMessage?: (message: Message) => Promise<void>;
   onAfterCharacterPost?: (message: Message, character: Character) => Promise<void>;
   onAfterShowCharacterProfile?: (message: Message, character: Character, user: User) => Promise<void>;
   onBeforeCharacterPost?: (message: Message, messageOptions: BaseMessageOptions, character: Character) => Promise<void>;
@@ -38,6 +39,7 @@ export default class Plugin {
   public exampleParagraphsLocalizations: Record<string, Array<string>>;
   public author: string;
   public commandsData: Array<PluginCommand>;
+  public onUserMessage?: (message: Message) => Promise<void>;
   public onBeforeCharacterPost?: (
     message: Message,
     messageOptions: BaseMessageOptions,
@@ -57,6 +59,7 @@ export default class Plugin {
     exampleParagraphs,
     author,
     commands,
+    onUserMessage,
     onAfterCharacterPost,
     onBeforeCharacterPost,
     onAfterShowCharacterProfile,
@@ -73,6 +76,7 @@ export default class Plugin {
     this.exampleParagraphs = exampleParagraphs ?? [];
     this.author = author;
     this.commandsData = commands;
+    this.onUserMessage = onUserMessage;
     this.onBeforeCharacterPost = onBeforeCharacterPost;
     this.onAfterCharacterPost = onAfterCharacterPost;
     this.onBeforeShowCharacterProfile = onBeforeShowCharacterProfile;

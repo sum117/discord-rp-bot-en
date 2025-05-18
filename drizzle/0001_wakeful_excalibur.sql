@@ -1,0 +1,1 @@
+ALTER TABLE servers ADD `streakPluginEnabled` integer DEFAULT false NOT NULL;

@@ -42,6 +42,7 @@ import type { characters, items } from "./schema";
 import api from "./server";
 import PostService from "./services/postService";
 import { ServerService } from "./services/serverService";
+import { streakPlugin } from "./plugins/streakPlugin";
 
 export interface RoleplayEventPayloads {
   characterCreate: [character: typeof characters.$inferSelect];
@@ -80,7 +81,7 @@ export enum EditingState {
 export class RoleplayBot extends Client {
   public isEditing = new Map<string, EditingState>();
   public commands = new Map<string, BaseCommand>();
-  public availablePlugins = [moneyPlugin, dndPlugin];
+  public availablePlugins = [moneyPlugin, dndPlugin, streakPlugin];
   public on<Event extends keyof RoleplayBotEventPayloads>(
     event: Event,
     listener: (...args: RoleplayBotEventPayloads[Event]) => void,
