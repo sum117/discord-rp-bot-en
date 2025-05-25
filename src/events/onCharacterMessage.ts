@@ -8,6 +8,7 @@ import ptBr from "../locales/pt-BR.json";
 import CharacterService from "../services/characterService";
 import CommonService from "../services/commonService";
 import { BaseEvent } from "./baseEvent";
+import { ServerService } from "@/services/serverService";
 
 export default class onCharacterMessage extends BaseEvent {
   public constructor() {
@@ -22,6 +23,12 @@ export default class onCharacterMessage extends BaseEvent {
     });
   }
   async execute(message: Message<true>) {
+    if (message.inGuild()) {
+      const server = await ServerService.getOrCreateServer(message.guild.id);
+      if (server.blacklistedCategories.includes(message.channel.parentId ?? "")) {
+        return;
+      }
+    }
     if (message.author.bot || bot.isEditing.get(message.author.id) === EditingState.Editing) {
       return;
     }

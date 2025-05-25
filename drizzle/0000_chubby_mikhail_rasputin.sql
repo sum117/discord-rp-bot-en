@@ -77,8 +77,10 @@ CREATE TABLE `postsToCharacters` (
 --> statement-breakpoint
 CREATE TABLE `servers` (
 	`id` text PRIMARY KEY NOT NULL,
+	`blacklistedCategories` text,
 	`moneyPluginEnabled` integer DEFAULT false NOT NULL,
-	`dndPluginEnabled` integer DEFAULT false NOT NULL
+	`dndPluginEnabled` integer DEFAULT false NOT NULL,
+	`streakPluginEnabled` integer DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `userServerData` (
@@ -95,7 +97,7 @@ CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`joinedBotAt` integer DEFAULT (CURRENT_TIMESTAMP),
 	`level` integer DEFAULT 1 NOT NULL,
-	`preferredLanguage` text DEFAULT 'en-US' NOT NULL,
+	`preferredLanguage` text DEFAULT 'pt-BR' NOT NULL,
 	`exp` integer DEFAULT 0 NOT NULL,
 	`currentCharacterId` integer
 );

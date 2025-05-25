@@ -11,12 +11,23 @@ export default class Server implements ServerType {
   moneyPluginEnabled: boolean;
   dndPluginEnabled: boolean;
   streakPluginEnabled: boolean;
+  blacklistedCategories: string = "[]";
   constructor(data: ServerType) {
     this.id = data.id;
     this.moneyPluginEnabled = data.moneyPluginEnabled;
     this.dndPluginEnabled = data.dndPluginEnabled;
     this.streakPluginEnabled = data.streakPluginEnabled;
+    this.blacklistedCategories = data.blacklistedCategories || "[]";
   }
+
+  get blacklistedCategoriesArray() {
+    return JSON.parse(this.blacklistedCategories) as string[];
+  }
+
+  set blacklistedCategoriesArray(categories: string[]) {
+    this.blacklistedCategories = JSON.stringify(categories);
+  }
+
 
   public getPlugins() {
     const plugins = [];

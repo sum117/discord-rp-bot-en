@@ -36,6 +36,29 @@ export class ServerService {
     }
     return serverData;
   }
+
+  public static async addBlacklistedCategoryToServer(serverId: string, categoryId: string) {
+    const server = await this.getOrCreateServer(serverId);
+    const blacklistedCategories = server.blacklistedCategoriesArray || [];
+    if (!blacklistedCategories.includes(categoryId)) {
+      blacklistedCategories.push(categoryId);
+      const updatedServer = new Server({ ...server, blacklistedCategories: JSON.stringify(blacklistedCategories) });
+      const [result] = await this.updateServer(updatedServer);
+      return result;
+    }
+  };
+  public static async removeBlacklistedCategoryFromServer(serverId: string, categoryId: string) {
+    const server = await this.getOrCreateServer(serverId);
+    const blacklistedCategories = server.blacklistedCategoriesArray || [];
+    if (blacklistedCategories.includes(categoryId)) {
+      const updatedCategories = blacklistedCategories.filter(id => id !== categoryId);
+      const updatedServer = new Server({ ...server, blacklistedCategories: JSON.stringify(updatedCategories) });
+      const [result] = await this.updateServer(updatedServer);
+      return result;
+    }
+  };
+
+
   public static async getOrCreateUserServerData(userId: string, serverId: string) {
     const serverData = await db.query.userServerData.findFirst({
       where: (data, { and }) => and(eq(data.userId, userId), eq(data.serverId, serverId)),

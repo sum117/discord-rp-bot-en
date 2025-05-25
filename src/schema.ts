@@ -7,7 +7,7 @@ export const users = sqliteTable("users", {
   level: integer("level").notNull().default(1),
   preferredLanguage: text("preferredLanguage", { enum: ["en-US", "pt-BR"] })
     .notNull()
-    .default("en-US"),
+    .default("pt-BR"),
   exp: integer("exp").notNull().default(0),
   currentCharacterId: integer("currentCharacterId"),
 });
@@ -66,6 +66,7 @@ export const charactersRelations = relations(characters, ({ one, many }) => ({
 
 export const servers = sqliteTable("servers", {
   id: text("id").primaryKey(),
+  blacklistedCategories: text("blacklistedCategories"),
   moneyPluginEnabled: integer("moneyPluginEnabled", { mode: "boolean" }).notNull().default(false),
   dndPluginEnabled: integer("dndPluginEnabled", { mode: "boolean" }).notNull().default(false),
   streakPluginEnabled: integer("streakPluginEnabled", { mode: "boolean" }).notNull().default(false),

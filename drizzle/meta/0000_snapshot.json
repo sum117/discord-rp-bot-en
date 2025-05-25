@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "8fb02be5-83df-461e-9690-1e07bbae83d8",
+  "id": "92493219-f328-47c1-8f3c-90cd0e09e5ea",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "categories": {
@@ -508,6 +508,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "blacklistedCategories": {
+          "name": "blacklistedCategories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "moneyPluginEnabled": {
           "name": "moneyPluginEnabled",
           "type": "integer",
@@ -518,6 +525,14 @@
         },
         "dndPluginEnabled": {
           "name": "dndPluginEnabled",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "streakPluginEnabled": {
+          "name": "streakPluginEnabled",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -636,7 +651,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'en-US'"
+          "default": "'pt-BR'"
         },
         "exp": {
           "name": "exp",

@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "Equidade-Chan",
+            "script": "bun",
+            "args": "build/index.js"
+        }
+    ]
+}

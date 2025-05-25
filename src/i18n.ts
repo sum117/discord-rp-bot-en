@@ -15,6 +15,6 @@ export default function translate(key: TranslationKey, options?: TOptions): stri
   return i18next.t(key, options);
 }
 
-export function translateFactory(lng: "pt-BR" | "en-US") {
+export function translateFactory(lng: "pt-BR" | "en-US" = "pt-BR") {
   return (key: TranslationKey, options?: TOptions) => translate(key, { lng, ...options });
 }
